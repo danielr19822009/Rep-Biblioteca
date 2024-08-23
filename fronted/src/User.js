@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/css/bootstrap.min.css"; //estilos
 import "./css/sb-admin-2.css";
 import "./css/sb-admin-2.min.css";
 
-import Swal from "sweetalert2";
-import Axios from "axios";
+import Swal from "sweetalert2";   //libreria para alertas bonitas
+import Axios from "axios";        
 
 
 
