@@ -1,12 +1,6 @@
 import React from 'react'
 import './App.css';
-import "./App.css";
-import "bootstrap/dist/css/bootstrap.min.css";
-import "./css/sb-admin-2.css";
-import "./css/sb-admin-2.min.css";
-
-import Swal from "sweetalert2";
-import Axios from "axios";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const LibraryManagement = () => {
   return (
