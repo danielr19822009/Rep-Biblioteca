@@ -1,14 +1,18 @@
 
 import './App.css';
 import Login from './Login.js'
-import People from './Personas.js'
-import Libros from './Libros.js'
-import Prestamos from './Prestamos.js'
+import User from './User.js'
+import Libro from './Libros.js'
+import Autor from './Autores.js'
+import Prestamo from './Prestamos.js'
+import Editorial from './Editoriales.js'
+import 'bootstrap/dist/css/bootstrap.min.css';
+
 
 function App() {
   return (
    
-      < People/>
+      < Editorial/>
     
   );
 }
