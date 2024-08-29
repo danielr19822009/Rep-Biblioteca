@@ -9,7 +9,7 @@ import Axios from "axios";
 
 
 // Componente para la gestión de autores
-const Autor = () => {
+const Add_Autor = () => {
   // Definición de estados para manejar los datos del autor y la lista de autores
   const [autorid, setAutorid] = useState("");
   const [nombreAutor, setNombreAutor] = useState("");
@@ -207,101 +207,7 @@ const Autor = () => {
 
       <hr />
 
-      <div id="tablausers" className="card shadow mb-4">
-        <div className="card-header py-3">
-          <h6 id='titablausers' className="m-0 font-weight-bold text-primary">Autores</h6>
-        </div>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-bordered" id="dataTable" width="100%" cellSpacing="0">
-              <thead>
-                <tr>
-                  <th scope="col">Nombre</th>
-                  <th scope="col">Apellido</th>
-                  <th scope="col">Opciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {autores.map((autor) => (
-                  <tr key={autor.autorId}>
-                    <td>{autor.nombreAutor}</td>
-                    <td>{autor.apellidoAutor}</td>
-                    <td className="opciones">
-                      <div className="btn-group" role="group">
-                        <button
-                          type="button"
-                          className="btn btn-info"
-                          onClick={() => {
-                            setNombreAutor(autor.nombreAutor);
-                            setApellidoAutor(autor.apellidoAutor);
-                            setAutorid(autor.autorId); // Establece el ID del autor para editar
-                          }}
-                          data-bs-toggle="modal"
-                          data-bs-target="#exampleModal"
-                        >
-                          Editar
-                        </button>
-                        <button
-                          type="button" className="btn btn-danger"
-                          onClick={() => deleteAutor(autor.autorId)}
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      {/* Modal para editar */}
-      <div className="modal fade" id="exampleModal" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="editAutorModalLabel">EDITAR AUTOR</h5>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={(event) => { event.preventDefault(); updateAutores(); }}>
-                <div className="input-group mb-3">
-                  <span className="input-group-text">Nombre</span>
-                  <input
-                    id="nombreeditar"
-                    type="text"
-                    className="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-default"
-                    onChange={(event) => setNombreAutor(event.target.value)}
-                    value={nombreAutor}
-                    required
-                  />
-                </div>
-                <div className="input-group mb-3">
-                  <span className="input-group-text">Apellido</span>
-                  <input
-                    id="apellidoeditar"
-                    type="text"
-                    className="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-default"
-                    onChange={(event) => setApellidoAutor(event.target.value)}
-                    value={apellidoAutor}
-                    required
-                  />
-                </div>
-                <div className="modal-footer">
-                  <button type="submit" className="btn btn-primary">Actualizar</button>
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      
     </div>
   );
 };
@@ -315,4 +221,4 @@ export function export_addAutor(nombre,apellido) {
     })
 }
 
-export default Autor;
+export default Add_Autor;

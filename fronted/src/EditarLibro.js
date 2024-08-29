@@ -4,15 +4,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "./css/sb-admin-2.css";
 import "./css/sb-admin-2.min.css";
+
 import Swal from "sweetalert2";
 import Axios from "axios";
 
 // Importa la función desde el archivo functions.js
-const export_addAutor = require("./Autores.js");
-const export_addEditorial = require("./Editoriales.js");
+const export_addAutor = require("./AddAutor.js");
+const export_addEditorial = require("./EditarEditorial.js");
 
 // Componente para la gestión de la biblioteca
-const Libros = () => {
+const Edit_Libro = () => {
   const [libroId, setlibroId] = useState("");
   const [nombrelibro, setnombrelibro] = useState("");
   const [nombreautor, setnombreautor] = useState("");
@@ -174,119 +175,6 @@ const Libros = () => {
 
   return (
     <div className="container-fluid">
-      <div className="container" id="reg-libro">
-        <div className="card text-center">
-          <div className="card-header">Registra Nuevo Libro</div>
-          <div className="card-body">
-            <form>
-              <div className="input-group mb-3">
-                <span className="input-group-text">Nombre</span>
-                <input
-                  id="nombrelibro"
-                  type="text"
-                  className="form-control"
-                  required
-                  value={nombrelibro}
-                  onChange={(event) => setnombrelibro(event.target.value)}
-                />
-              </div>
-              <div className="input-group mb-3">
-                <span className="input-group-text">Autor:</span>
-                <select
-                  name="autorId"
-                  className="form-control"
-                  id="autorId"
-                  value={nombreautor}
-                  onChange={(e) => setnombreautor(e.target.value)}
-                >
-                  <option value="">Seleccionar</option>
-                  {listaautor.map((autores) => (
-                    <option key={autores.autorId} value={autores.autorId}>
-                      {" "}
-                      {autores.nombreAutor + " " + autores.apellidoAutor}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  id="btn-add"
-                  type="button"
-                  className="btn btn-info"
-                  data-bs-toggle="modal"
-                  data-bs-target="#ModalAddAutor"
-                >
-                  {" "}
-                  Add Autor
-                </button>
-              </div>
-
-              <div className="input-group mb-3">
-                <span className="input-group-text">Editorial:</span>
-                <select
-                  className="form-control"
-                  id="editorialId"
-                  value={nombreeditorial}
-                  onChange={(e) => setnombreeditorial(e.target.value)}
-                >
-                  <option value="">Seleccionar</option>
-                  {listaeditorial.map((editoriales) => (
-                    <option
-                      key={editoriales.editorialId}
-                      value={editoriales.editorialId}
-                    >
-                      {editoriales.nombreEditorial}{" "}
-                    </option>
-                  ))}
-                  <option value=""> Add Editorial </option>
-                </select>
-                <button
-                  type="button"
-                  className="btn btn-info"
-                  data-bs-toggle="modal"
-                  data-bs-target="#ModalAddEditorial"
-                >
-                  {" "}
-                  Add Editorial
-                </button>
-              </div>
-
-              <div className="input-group mb-3">
-                <span className="input-group-text">Cantidad:</span>
-                <input
-                  name="cantidad"
-                  type="number"
-                  className="form-control"
-                  required
-                  value={cantidad}
-                  onChange={(e) => setCantidad(e.target.value)}
-                />
-              </div>
-              <div className="input-group mb-3" id="fecha">
-                <span className="input-group-text">Fecha:</span>
-                <input
-                  id="fecha"
-                  type="date"
-                  className="form-control"
-                  required
-                  value={fecha}
-                  onChange={(e) => setFecha(e.target.value)}
-                />
-              </div>
-              <div></div>
-            </form>
-            <button
-              id="btn-registrar"
-              onClick={addLibro}
-              type="submit"
-              className="btn btn-block btn-primary"
-            >
-              Registrar
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <hr />
-
       {/* tabla mostrar libros */}
       <div id="tablausers" className="card shadow mb-4">
         <div className="card-header py-3">
@@ -505,13 +393,15 @@ const Libros = () => {
                   >
                     Cerrar
                   </button>
-                  <button type="submit" className="btn btn-primary" onClick={export_addAutor}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    onClick={export_addAutor}
+                  >
                     Add Autor
                   </button>
                 </div>
-
               </form>
-            
             </div>
           </div>
         </div>
@@ -597,13 +487,15 @@ const Libros = () => {
                   >
                     Cerrar
                   </button>
-                  <button type="submit" className="btn btn-primary" onClick={export_addEditorial}>
+                  <button
+                    type="submit"
+                    className="btn btn-primary"
+                    onClick={export_addEditorial}
+                  >
                     Add Autor
                   </button>
                 </div>
-
               </form>
-              
             </div>
           </div>
         </div>
@@ -612,4 +504,4 @@ const Libros = () => {
   );
 };
 
-export default Libros;
+export default Edit_Libro;

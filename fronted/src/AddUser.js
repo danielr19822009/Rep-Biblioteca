@@ -11,7 +11,7 @@ import Axios from "axios";
 
 
 
-const PeopleManagement = () => {
+const Add_User = () => {
   const [id, setId] = useState("");
   const [cedula, setCedula] = useState("");
   const [nombre, setNombre] = useState("");
@@ -275,66 +275,9 @@ const PeopleManagement = () => {
         </div>
       </div>
 
-      {/* Tabla para mostrar los usuarios */}
-      <div id="tablausers" className="card shadow mb-4">
-        <div className="card-header py-3">
-          <h6 id='titablausers' className="m-0 font-weight-bold text-primary">Usuarios</h6>
-        </div>
-        <div className="card-body">
-          <div className="table-responsive">
-            <table className="table table-bordered" id="dataTable" width="100%" cellSpacing="0">
-              <thead>
-                <tr>
-                  <th scope="col">ID</th>
-                  <th scope="col">N° Cédula</th>
-                  <th scope="col">Nombre</th>
-                  <th scope="col">Teléfono</th>
-                  <th scope="col">Dirección</th>
-                  <th className="opciones" scope="col">Opciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {usersList.map((user) => (
-                  <tr key={user.usuarioId}>
-                    <td>{user.usuarioId}</td>
-                    <td>{user.cedula}</td>
-                    <td>{user.nombre}</td>
-                    <td>{user.telefono}</td>
-                    <td>{user.direccion}</td>
-                    <td className="opciones">
-                      <div className="btn-group" role="group" aria-label="Basic example">
-                        <button
-                          type="button"
-                          className="btn btn-info"
-                          onClick={() => {
-                            setId(user.usuarioId);
-                            setCedula(user.cedula);
-                            setNombre(user.nombre);
-                            setDireccion(user.direccion);
-                            setTelefono(user.telefono);
-                            setEditar(true); //banderita
-                          }}
-                        >
-                          Editar
-                        </button>
-                        <button
-                          type="button"
-                          className="btn btn-danger "
-                          onClick={() => deleteUser(user.usuarioId, user.nombre)} // Corrección aquí
-                        >
-                          Eliminar
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+      
     </div>
   );
 };
 
-export default PeopleManagement;
+export default Add_User;

@@ -3,9 +3,7 @@
   gap: 5px;
 }
 
-#tablausers{
-  margin-top: 2em ;
-}
+
 .card-header{
   display: flex;
   align-items: center;       /* Alinea verticalmente (en el eje transversal) */
@@ -34,4 +32,8 @@ width: 100px;
   font-size: 2.5rem; /* Tamaño de la fuente */
   color: #2c3e50; /* Color del texto */
   margin: 20px 0; /* Espacio alrededor del título */
+}
+
+.btn-add{
+  width: 30%;
 }

@@ -198,24 +198,21 @@ app.post('/add_editoriales', (req, res) => {
     });
   });
 
-  app.put('/update_editoriales/:editorialId', (req, res) => {
-    const { editorialId, nombreEditorial, direccionEditorial, telefonoEditorial } = req.body;
-  
-    if (!nombreEditorial) {
-      return res.status(400).json({ message: 'El campo nombree es necesario.' });
-    }
-  
-    db.query(
-      'UPDATE editorial SET nombreEditorial = ?, direccionEditorial = ?, telefonoEditorial = ? WHERE editorialId = ?',[nombreEditorial, direccionEditorial, telefonoEditorial, editorialId],
+  // Endpoint para actualizar un autor
+app.put('/update_editoriales', (req, res) => {
+    const { editorialId, nombreEditorial, direccionEditorial,telefonoEditorial } = req.body;
+
+    alert(editorialId + nombreEditorial + direccionEditorial)
+    db.query('UPDATE editorial SET nombreEditorial = ?, direccionEditorial = ?, telefonoEditorial=? WHERE editorialId = ?', [nombreEditorial, direccionEditorial, telefonoEditorial,editorialId],
       (err, result) => {
         if (err) {
-          console.error('Error al actualizar la editorial:', err);
-          return res.status(500).json({ message: 'Error al actualizar la editorial.' });
+          console.error('Error al actualizar el Editorial:', err);
+          return res.status(500).send('Error al actualizar el Editorial.');
         }
         if (result.affectedRows === 0) {
-          return res.status(404).json({ message: 'Editorial no encontrada.' });
+          return res.status(404).send('Editorial no encontrado.');
         }
-        res.json({ message: 'Editorial actualizada con éxito.' });
+        res.send('Editorial actualizado con éxito.');
       }
     );
   });
@@ -331,6 +328,49 @@ app.post('/add_libro', (req, res) => {
         }
     });
 });
+
+
+///prestamos
+
+// Endpoint get editorial
+app.get('/get_prestamos', (req, res) => {
+    //query para seleccionar los datos a la base de datos
+    db.query(`SELECT p.prestamoId, p.usuarioId, p.libroId, p.estado, p.fechaFin, p.fechaCreacion, u.nombre as nombusu, l.nombrelibro as nomblibro FROM prestamo p INNER JOIN users u ON p.usuarioId = u.usuarioId INNER JOIN libro l ON p.libroId=l.libroId ORDER BY prestamoId ASC;
+`,
+        (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                res.send(result);
+            }
+        }
+    );
+})
+
+// Endpoint ADD prestamo
+app.post('/add_prestamo', (req, res) => {
+    const { usuario,libro, estado, fechaprestamo, fechadevolucion } = req.body;
+  
+    console.log({
+        usuario,
+        libro,
+        estado,
+        fechaprestamo,
+        fechadevolucion
+    });
+  
+    db.query(`INSERT INTO prestamo (usuarioId, libroId, estado, fechaFin,fechaCreacion) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [usuario, libro, estado, fechaprestamo, fechadevolucion],
+      (err, result) => {
+        if (err) {
+          console.error('Error al agregar el prestamo:', err);
+          return res.status(500).send('Error al agregar el prestamo');
+        }
+        res.send('prestamo agregado exitosamente');
+      }
+    );
+  });
 
 app.listen(3001, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
