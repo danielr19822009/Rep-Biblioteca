@@ -5,9 +5,9 @@
 const express = require('express');
 const app = express();
 const mysql = require('mysql');
-const cors = require('cors');
 const port = 3001;
 
+const cors = require('cors');
 app.use(cors());
 app.use(express.json());
 
@@ -96,7 +96,7 @@ app.get('/get_users', (req, res) => {
 app.post('/add_autores', (req, res) => {
     const nombreAutor  = req.body.nombreAutor;
     const apellidoAutor = req.body.apellidoAutor;
-    console.log('Autor', 'Autor');
+    console.log('Autor' + nombreAutor);
     db.query('INSERT INTO autor (nombreAutor, apellidoAutor) VALUES (?, ?)', [nombreAutor, apellidoAutor], (err, result) => {
         if (err) {
             console.error('Error al agregar el autor:', err);
@@ -161,7 +161,6 @@ app.put('/update_autor', (req, res) => {
 
 ////EDITORIALES      
 // Endpoint get editorial
-
 app.get('/get_editoriales', (req, res) => {
     //query para seleccionar los datos a la base de datos
     db.query('select * from editorial ',
@@ -174,18 +173,161 @@ app.get('/get_editoriales', (req, res) => {
         }
     );
 })
+
+
 // Endpoint ADD editorial
 app.post('/add_editoriales', (req, res) => {
-    const nombreEditorial  = req.body.nombreEditorial;
-    const direccioEditorial = req.body.direccioEditorial;
+    // Extract data from request body
+    const nombreEditorial = req.body.nombreEditorial;
+    const direccionEditorial = req.body.direccionEditorial;
     const telefonoEditorial = req.body.telefonoEditorial;
+  
+    // Debugging information (Optional, remove in production)
+    console.log(nombreEditorial, direccionEditorial, telefonoEditorial);
+  
+    // Insert data into the database
+    db.query('INSERT INTO editorial (nombreEditorial, direccionEditorial, telefonoEditorial) VALUES (?, ?, ?)', [nombreEditorial, direccionEditorial, telefonoEditorial], (err, result) => {
+      if (err) {
+        // Log error and send error response
+        console.error('Error al agregar el editorial:', err);
+        res.status(500).send('Error al agregar el editorial');
+      } else {
+        // Send success response
+        res.send('Editorial agregado exitosamente');
+      }
+    });
+  });
 
-    db.query('INSERT INTO editorial (nombreEditorial, direccioEditorial,telefonoEditorial) VALUES (?, ?, ?)', [nombreEditorial, direccioEditorial, telefonoEditorial], (err, result) => {
+  app.put('/update_editoriales/:editorialId', (req, res) => {
+    const { editorialId, nombreEditorial, direccionEditorial, telefonoEditorial } = req.body;
+  
+    if (!nombreEditorial) {
+      return res.status(400).json({ message: 'El campo nombree es necesario.' });
+    }
+  
+    db.query(
+      'UPDATE editorial SET nombreEditorial = ?, direccionEditorial = ?, telefonoEditorial = ? WHERE editorialId = ?',[nombreEditorial, direccionEditorial, telefonoEditorial, editorialId],
+      (err, result) => {
         if (err) {
-            console.error('Error al agregar el editorial:', err);
-            res.status(500).send('Error al agregar el editorial');
+          console.error('Error al actualizar la editorial:', err);
+          return res.status(500).json({ message: 'Error al actualizar la editorial.' });
+        }
+        if (result.affectedRows === 0) {
+          return res.status(404).json({ message: 'Editorial no encontrada.' });
+        }
+        res.json({ message: 'Editorial actualizada con éxito.' });
+      }
+    );
+  });
+
+ // Endpoint para eliminar un editorial
+ app.delete('/delete_editoriales/:editorialId', (req, res) => {
+    // Extraer el id de los parámetros de la solicitud
+    const { editorialId } = req.params;
+
+    // Ejecutar la consulta
+    db.query('DELETE FROM editorial WHERE editorialId = ?', [editorialId], (err, result) => {
+        if (err) {
+            console.error('Error al eliminar el Editorial:', err);
+            return res.status(500).json({ error: 'Error al eliminar el editorial' });
         } else {
-            res.send('editorial agregado exitosamente');
+            res.json(result);
+        }
+    });
+});
+
+
+//////librossssss
+ // Endpoint para obtener libros
+app.get('/get_libros', (req, res) => {
+    //query para seleccionar los datos a la base de datos
+    db.query(`SELECT libro.libroId, libro.nombreLibro, libro.autorId, libro.cantidad, libro.fechaCreacion, 
+        editorial.nombreEditorial AS nombreEditorial , 
+        autor.autorId AS autorId,
+        autor.nombreAutor AS nombreAutor , 
+        autor.apellidoAutor AS apellidoAutor 
+       		 FROM libro 
+        			INNER JOIN 
+        				editorial ON libro.editorialId = editorial.editorialId 
+        			INNER JOIN 
+       					autor ON libro.autorId = autor.autorId order by libro.libroId asc`,
+        (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                res.send(result);
+            }
+        }
+    );
+})
+
+// Endpoint get editorial
+app.get('/get_libros_editoriales', (req, res) => {
+    //query para seleccionar los datos a la base de datos
+    db.query('SELECT * from editorial',
+        (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                res.send(result);
+            }
+        }
+    );
+})
+
+// Endpoint get editorial
+app.get('/get_libros_autores', (req, res) => {
+    //query para seleccionar los datos a la base de datos
+    db.query('select * from autor',
+        (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                res.send(result);
+            }
+        }
+    );
+})
+
+// Endpoint ADD libro
+app.post('/add_libro', (req, res) => {
+    const { nombrelibro,nombreeditorial, nombreautor, cantidad, fecha } = req.body;
+  
+    console.log({
+      nombrelibro,
+      nombreeditorial,
+      nombreautor,
+      cantidad,
+      fecha
+    });
+  
+    db.query(
+      `INSERT INTO libro (nombreLibro, editorialId, autorId, cantidad, fechaCreacion) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [nombrelibro, nombreeditorial, nombreautor, cantidad, fecha],
+      (err, result) => {
+        if (err) {
+          console.error('Error al agregar el libro:', err);
+          return res.status(500).send('Error al agregar el libro');
+        }
+        res.send('Libro agregado exitosamente');
+      }
+    );
+  });
+
+
+   // Endpoint para eliminar un libro
+ app.delete('/delete_libros/:libroId', (req, res) => {
+    // Extraer el id de los parámetros de la solicitud
+    const { libroId } = req.params;
+
+    // Ejecutar la consulta
+    db.query('DELETE FROM libro WHERE libroid=?', [libroId], (err, result) => {
+        if (err) {
+            console.error('Error al eliminar el libro:'+ id, err);
+            return res.status(500).json({ error: 'Error al eliminar el libro' });
+        } else {
+            res.json(result);
         }
     });
 });

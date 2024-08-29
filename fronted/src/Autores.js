@@ -7,14 +7,16 @@ import "./css/sb-admin-2.min.css";
 import Swal from "sweetalert2";
 import Axios from "axios";
 
+
 // Componente para la gestión de autores
 const Autor = () => {
+  // Definición de estados para manejar los datos del autor y la lista de autores
   const [autorid, setAutorid] = useState("");
   const [nombreAutor, setNombreAutor] = useState("");
   const [apellidoAutor, setApellidoAutor] = useState("");
   const [autores, setAutores] = useState([]);
 
-  // Function to add user
+  // Función para agregar un nuevo autor
   const addAutor = () => {
     if (nombreAutor === "" || apellidoAutor === "") {
       Swal.fire({
@@ -39,13 +41,14 @@ const Autor = () => {
         timerProgressBar: true,
       });
 
+      // Realiza una solicitud POST para agregar el autor
       Axios.post("http://localhost:3001/add_autores", {
         nombreAutor,
         apellidoAutor,
       })
         .then(() => {
-          getAutores();
-          setNombreAutor("");
+          getAutores(); // Actualiza la lista de autores
+          setNombreAutor(""); // Limpia los campos
           setApellidoAutor("");
         })
         .catch((error) => {
@@ -63,17 +66,19 @@ const Autor = () => {
         });
     }
   };
-//funcion obtener o get
+
+  // Función para obtener la lista de autores
   const getAutores = () => {
     Axios.get("http://localhost:3001/get_autores")
       .then((response) => {
-        setAutores(response.data);
+        setAutores(response.data); // Actualiza el estado con los datos obtenidos
       })
       .catch((error) => {
         console.error("Hubo un error al obtener los autores:", error);
       });
   };
 
+  // Hook para cargar los autores al montar el componente
   useEffect(() => {
     getAutores();
   }, []);
@@ -88,7 +93,7 @@ const Autor = () => {
           icon: "success",
           timer: 4000,
         });
-        getAutores(); // Llama a la función para actualizar la lista de autores después de eliminar
+        getAutores(); // Actualiza la lista de autores después de eliminar
       })
       .catch((error) => {
         console.error("Hubo un error al eliminar el autor:", error);
@@ -104,7 +109,8 @@ const Autor = () => {
         });
       });
   };
-///fncion update autor
+
+  // Función para actualizar un autor
   const updateAutores = () => {
     if (!nombreAutor || !apellidoAutor || !autorid) {
       Swal.fire({
@@ -132,10 +138,8 @@ const Autor = () => {
           icon: "success",
           timer: 4000,
         });
-        getAutores();
-        clear();
-    
-
+        getAutores(); // Actualiza la lista de autores después de la actualización
+        clear(); // Limpia los campos
       })
       .catch((error) => {
         console.error("Hubo un error al actualizar el autor:", error);
@@ -152,23 +156,22 @@ const Autor = () => {
       });
   };
 
-  //funcion clear limpiar campos
+  // Función para limpiar los campos de entrada
   const clear = () => {
     setNombreAutor("");
     setApellidoAutor("");
-    setAutorid(""); // Si necesitas resetear el ID del autor para la edición
+    setAutorid(""); // Limpia el ID del autor para la edición
   };
 
   return (
     <div className="container-fluid">
       <div className="container containerAutor">
         <div className="card text-center">
+        <div className="card-header">Registra Nuevo Autor</div>
           <div className="card">
             <div className="card-body">
               <form id="reg-pdo">
-                <div className="form-group">
-                  <h2>AUTOR</h2>
-                </div>
+                
                 <div className="input-group mb-3">
                   <span className="input-group-text">Nombre</span>
                   <input
@@ -239,8 +242,7 @@ const Autor = () => {
                           Editar
                         </button>
                         <button
-                          type="button"
-                          className="btn btn-danger"
+                          type="button" className="btn btn-danger"
                           onClick={() => deleteAutor(autor.autorId)}
                         >
                           Eliminar
@@ -303,5 +305,14 @@ const Autor = () => {
     </div>
   );
 };
+
+
+export function export_addAutor(nombre,apellido) {
+    // Realiza una solicitud POST para agregar el autor
+    Axios.post("http://localhost:3001/add_autores", {
+      nombre,
+      apellido,
+    })
+}
 
 export default Autor;

@@ -1,396 +1,609 @@
 import React, { useState, useEffect } from "react";
-import './App.css';
+import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap/dist/js/bootstrap.bundle.min";
 import "./css/sb-admin-2.css";
 import "./css/sb-admin-2.min.css";
 import Swal from "sweetalert2";
 import Axios from "axios";
 
+// Importa la función desde el archivo functions.js
+const export_addAutor = require("./Autores.js");
+const export_addEditorial = require("./Editoriales.js");
+
 // Componente para la gestión de la biblioteca
-const LibraryManagement = () => {
-  const [librosList, setLibrosList] = useState([]);
-  const [editoriales, setEditoriales] = useState([]);
-  const [autores, setAutores] = useState([]);
-  
-  const [formEditorial, setFormEditorial] = useState({ nombre: '', direccion: '', telefono: '' });
-  const [formAutor, setFormAutor] = useState({ nombre: '', apellido: '' });
-  const [formLibro, setFormLibro] = useState({ nombre: '', autorId: '', editorialId: '', cantidad: '' });
-  const [currentLibro, setCurrentLibro] = useState(null);
+const Libros = () => {
+  const [libroId, setlibroId] = useState("");
+  const [nombrelibro, setnombrelibro] = useState("");
+  const [nombreautor, setnombreautor] = useState("");
+  const [nombreeditorial, setnombreeditorial] = useState("");
+  const [cantidad, setCantidad] = useState("");
+  const [fecha, setFecha] = useState("");
+
+  // del modal autor
+  // Definición de estados para manejar los datos del autor y la lista de autores
+  const [autorid, setAutorid] = useState("");
+  const [nombreAutor, setNombreAutor] = useState("");
+  const [apellidoAutor, setApellidoAutor] = useState("");
+
+  // Definición de estados para manejar los datos del editorial y la lista de editoriales
+  const [editorialId, setEditorialId] = useState(null);
+  const [nombreEditorial, setNombreEditorial] = useState("");
+  const [direccionEditorial, setDireccionEditorial] = useState("");
+  const [telefonoEditorial, setTelefonoEditorial] = useState("");
+
+  //listas data
+  const [listalibros, setListalibros] = useState([]);
+  const [listaautor, setlistaautor] = useState([]);
+  const [listaeditorial, setlistaeditorial] = useState([]);
 
   // Función para obtener los libros
   const getLibros = () => {
     Axios.get("http://localhost:3001/get_libros")
       .then((response) => {
-        setLibrosList(response.data);
+        console.log("Libros obtenidos:", response.data); // Verifica los datos
+        setListalibros(response.data);
+        setlistaautor(response.data);
+        setlistaeditorial(response.data);
       })
       .catch((error) => {
-        console.error("Hubo un error al obtener los Libros:", error);
+        console.error("Hubo un error al obtener los libros:", error);
       });
   };
 
-  // Función para obtener las editoriales y autores
+  // Función para obtener las editoriales
   const getEditoriales = () => {
-    Axios.get("http://localhost:3001/get_editoriales")
+    Axios.get("http://localhost:3001/get_libros_editoriales")
       .then((response) => {
-        setEditoriales(response.data);
+        console.log("Editoriales obtenidas:", response.data); // Verifica los datos
+        setlistaeditorial(response.data);
       })
       .catch((error) => {
-        console.error("Hubo un error al obtener las Editoriales:", error);
+        console.error("Hubo un error al obtener las editoriales:", error);
       });
   };
 
-  const getAutores = () => {
-    Axios.get("http://localhost:3001/get_autores")
+  // Función para obtener los autores
+  const getautores = () => {
+    Axios.get("http://localhost:3001/get_libros_autores")
       .then((response) => {
-        setAutores(response.data);
+        console.log("Autores obtenidos:", response.data); // Verifica los datos
+        setlistaautor(response.data);
       })
       .catch((error) => {
-        console.error("Hubo un error al obtener los Autores:", error);
+        console.error("Hubo un error al obtener los autores:", error);
       });
   };
 
   useEffect(() => {
     getLibros();
+    getautores();
     getEditoriales();
-    getAutores();
   }, []);
 
-  const handleEditorialChange = (e) => {
-    const { name, value } = e.target;
-    setFormEditorial((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleAutorChange = (e) => {
-    const { name, value } = e.target;
-    setFormAutor((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleLibroChange = (e) => {
-    const { name, value } = e.target;
-    setFormLibro((prev) => ({ ...prev, [name]: value }));
-  };
-
-  const handleSubmitEditorial = (e) => {
+  const addLibro = (e) => {
     e.preventDefault();
-    Axios.post("http://localhost:3001/add_editorial", formEditorial)
-      .then((response) => {
-        Swal.fire("Éxito", "Editorial registrada exitosamente", "success");
-        setFormEditorial({ nombre: '', direccion: '', telefono: '' });
-        getEditoriales();
-      })
-      .catch((error) => {
-        console.error("Error al registrar la editorial:", error);
-      });
-  };
 
-  const handleSubmitAutor = (e) => {
-    e.preventDefault();
-    Axios.post("http://localhost:3001/add_autor", formAutor)
-      .then((response) => {
-        Swal.fire("Éxito", "Autor registrado exitosamente", "success");
-        setFormAutor({ nombre: '', apellido: '' });
-        getAutores();
-      })
-      .catch((error) => {
-        console.error("Error al registrar el autor:", error);
-      });
-  };
+    console.log({
+      nombrelibro,
+      nombreautor,
+      nombreeditorial,
+      cantidad,
+      fecha,
+    });
 
-  const handleSubmitLibro = (e) => {
-    e.preventDefault();
-    Axios.post("http://localhost:3001/add_libro", formLibro)
+    Axios.post("http://localhost:3001/add_libro", {
+      nombrelibro,
+      nombreautor,
+      nombreeditorial,
+      cantidad,
+      fecha,
+    })
       .then((response) => {
         Swal.fire("Éxito", "Libro registrado exitosamente", "success");
-        setFormLibro({ nombre: '', autorId: '', editorialId: '', cantidad: '' });
+        setnombrelibro("");
+        setnombreeditorial("");
+        setnombreautor("");
+        setCantidad("");
+        setFecha("");
         getLibros();
+        getEditoriales();
+        getautores();
       })
       .catch((error) => {
         console.error("Error al registrar el libro:", error);
       });
   };
 
-  const handleEdit = (libro) => {
-    setCurrentLibro(libro);
-    // Aquí deberías abrir el modal y poblar los datos del libro actual
-  };
-
-  const handleDelete = (id) => {
-    Axios.delete(`http://localhost:3001/delete_libro/${id}`)
+  const updateLibro = (e) => {
+    e.preventDefault();
+    Axios.put(`http://localhost:3001/update_libro/${libroId}`, {
+      libroId,
+      nombrelibro,
+      nombreeditorial,
+      nombreautor,
+      cantidad,
+      fecha,
+    })
       .then((response) => {
-        Swal.fire("Éxito", "Libro eliminado exitosamente", "success");
+        Swal.fire("Éxito", "Libro actualizado exitosamente", "success");
+        setnombrelibro("");
+        setnombreeditorial("");
+        setnombreautor("");
+        setCantidad("");
+        setFecha("");
         getLibros();
+        getEditoriales();
+        getautores();
       })
       .catch((error) => {
-        console.error("Error al eliminar el libro:", error);
+        console.error("Error al actualizar el libro:", error);
+      });
+  };
+
+  // Función para eliminar un editorial
+  const deleteLibro = (libroId, nombrelibro) => {
+    // Añade nombre como argumento
+
+    Axios.delete(`http://localhost:3001/delete_libros/${libroId}`)
+      .then(() => {
+        Swal.fire({
+          title: "Eliminar!",
+          html: `<strong>${nombrelibro}</strong> se ha eliminado`,
+          icon: "success",
+          timer: 4000,
+        });
+        getEditoriales();
+        getLibros();
+        getautores();
+      })
+      .catch((error) => {
+        console.error("Hubo un error al eliminar el nombre Editorial:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Hubo un error al eliminar el usuario.",
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 4000,
+          timerProgressBar: true,
+        });
       });
   };
 
   return (
-    <div>
-      <div className="row mt-5">
-        {/* Formulario para Editorial */}
-        <div className="col-lg-4 col-md-12 mb-2">
-          <div className="card">
-            <div className="card-body">
-              <form onSubmit={handleSubmitEditorial}>
-                <div className="form-group">
-                  <h2>EDITORIAL</h2>
-                </div>
+    <div className="container-fluid">
+      <div className="container" id="reg-libro">
+        <div className="card text-center">
+          <div className="card-header">Registra Nuevo Libro</div>
+          <div className="card-body">
+            <form>
+              <div className="input-group mb-3">
+                <span className="input-group-text">Nombre</span>
+                <input
+                  id="nombrelibro"
+                  type="text"
+                  className="form-control"
+                  required
+                  value={nombrelibro}
+                  onChange={(event) => setnombrelibro(event.target.value)}
+                />
+              </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text">Autor:</span>
+                <select
+                  name="autorId"
+                  className="form-control"
+                  id="autorId"
+                  value={nombreautor}
+                  onChange={(e) => setnombreautor(e.target.value)}
+                >
+                  <option value="">Seleccionar</option>
+                  {listaautor.map((autores) => (
+                    <option key={autores.autorId} value={autores.autorId}>
+                      {" "}
+                      {autores.nombreAutor + " " + autores.apellidoAutor}
+                    </option>
+                  ))}
+                </select>
+                <button
+                  id="btn-add"
+                  type="button"
+                  className="btn btn-info"
+                  data-bs-toggle="modal"
+                  data-bs-target="#ModalAddAutor"
+                >
+                  {" "}
+                  Add Autor
+                </button>
+              </div>
+
+              <div className="input-group mb-3">
+                <span className="input-group-text">Editorial:</span>
+                <select
+                  className="form-control"
+                  id="editorialId"
+                  value={nombreeditorial}
+                  onChange={(e) => setnombreeditorial(e.target.value)}
+                >
+                  <option value="">Seleccionar</option>
+                  {listaeditorial.map((editoriales) => (
+                    <option
+                      key={editoriales.editorialId}
+                      value={editoriales.editorialId}
+                    >
+                      {editoriales.nombreEditorial}{" "}
+                    </option>
+                  ))}
+                  <option value=""> Add Editorial </option>
+                </select>
+                <button
+                  type="button"
+                  className="btn btn-info"
+                  data-bs-toggle="modal"
+                  data-bs-target="#ModalAddEditorial"
+                >
+                  {" "}
+                  Add Editorial
+                </button>
+              </div>
+
+              <div className="input-group mb-3">
+                <span className="input-group-text">Cantidad:</span>
+                <input
+                  name="cantidad"
+                  type="number"
+                  className="form-control"
+                  required
+                  value={cantidad}
+                  onChange={(e) => setCantidad(e.target.value)}
+                />
+              </div>
+              <div className="input-group mb-3" id="fecha">
+                <span className="input-group-text">Fecha:</span>
+                <input
+                  id="fecha"
+                  type="date"
+                  className="form-control"
+                  required
+                  value={fecha}
+                  onChange={(e) => setFecha(e.target.value)}
+                />
+              </div>
+              <div></div>
+            </form>
+            <button
+              id="btn-registrar"
+              onClick={addLibro}
+              type="submit"
+              className="btn btn-block btn-primary"
+            >
+              Registrar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <hr />
+
+      {/* tabla mostrar libros */}
+      <div id="tablausers" className="card shadow mb-4">
+        <div className="card-header py-3">
+          <h6 id="titablausers" className="m-0 font-weight-bold text-primary">
+            Libros
+          </h6>
+        </div>
+        <div className="card-body">
+          <div className="table-responsive">
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Id Libro</th>
+                  <th scope="col">Nombre</th>
+                  <th scope="col">Editorial</th>
+                  <th scope="col">Autor</th>
+                  <th scope="col">Cantidad</th>
+                  <th scope="col">Fecha Creación</th>
+                  <th scope="col">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {listalibros.map((libro) => (
+                  <tr key={libro.libroId}>
+                    <td>{libro.libroId}</td>
+                    <td>{libro.nombreLibro}</td>
+                    <td>{libro.nombreEditorial}</td>{" "}
+                    <td>{libro.nombreAutor + " " + libro.apellidoAutor}</td>{" "}
+                    <td>{libro.cantidad}</td>
+                    <td>{libro.fechaCreacion}</td>
+                    <td className="opciones">
+                      <div className="btn-group" role="group">
+                        <button
+                          type="button"
+                          className="btn btn-info"
+                          onClick={() => {
+                            setnombrelibro(libro.nombreLibro);
+                            setnombreeditorial(libro.nombreEditorial);
+                            setnombreautor(libro.autorId);
+                            setCantidad(libro.cantidad);
+                            setFecha(libro.fechaCreacion);
+                          }}
+                          data-bs-toggle="modal"
+                          data-bs-target="#staticBackdrop"
+                        >
+                          Editar
+                        </button>
+                        <button
+                          type="button"
+                          className="btn btn-danger"
+                          onClick={() => deleteLibro(libro.libroId)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      {/* Modal para editar */}
+      <div
+        className="modal fade"
+        id="staticBackdrop"
+        data-bs-backdrop="static"
+        data-bs-keyboard="false"
+        tabIndex="-1"
+        aria-labelledby="staticBackdropLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                EDITAR LIBRO
+              </h5>
+            </div>
+            <div className="modal-body">
+              <form onSubmit={updateLibro}>
                 <div className="input-group mb-3">
-                  <span className="input-group-text">Nombre Editorial</span>
+                  <span className="input-group-text">id</span>
                   <input
-                    name="nombre"
-                    value={formEditorial.nombre}
-                    onChange={handleEditorialChange}
                     type="text"
+                    className="form-control"
+                    value={libroId}
+                    onChange={(event) => setlibroId(event.target.value)}
+                  />
+                </div>
+
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Nombre</span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={nombrelibro}
+                    onChange={(e) => setnombrelibro(e.target.value)}
+                  />
+                </div>
+
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Autor:</span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={nombreautor}
+                    onChange={(e) => setnombreautor(e.target.value)}
+                  />
+                </div>
+
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Editorial:</span>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={nombreeditorial}
+                    onChange={(e) => setnombreeditorial(e.target.value)}
+                  />
+                </div>
+
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Cantidad:</span>
+                  <input
+                    name="cantidad"
+                    type="number"
                     className="form-control"
                     required
+                    value={cantidad}
+                    onChange={(e) => setCantidad(e.target.value)}
                   />
                 </div>
+
                 <div className="input-group mb-3">
-                  <span className="input-group-text">Dirección Editorial</span>
+                  <span className="input-group-text">Fecha:</span>
                   <input
-                    name="direccion"
-                    value={formEditorial.direccion}
-                    onChange={handleEditorialChange}
-                    type="text"
+                    name="fecha"
+                    type="date"
                     className="form-control"
+                    required
+                    value={fecha}
+                    onChange={(e) => setFecha(e.target.value)}
                   />
                 </div>
-                <div className="input-group mb-3">
-                  <span className="input-group-text">Teléfono Editorial</span>
-                  <input
-                    name="telefono"
-                    value={formEditorial.telefono}
-                    onChange={handleEditorialChange}
-                    type="text"
-                    className="form-control"
-                  />
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cerrar
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    Actualizar
+                  </button>
                 </div>
-                <button type="submit" className="btn btn-block btn-primary">Registrar</button>
               </form>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Formulario para Autor */}
-        <div className="col-lg-4 col-md-12 mb-2">
-          <div className="card">
-            <div className="card-body">
-              <form onSubmit={handleSubmitAutor}>
+      {/*     MODAL NUEVO AUTOR*/}
+      <div
+        className="modal fade"
+        id="ModalAddAutor"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Nuevo Autor
+              </h5>
+            </div>
+            <div className="modal-body">
+              <form id="reg-pdo">
                 <div className="form-group">
                   <h2>AUTOR</h2>
                 </div>
                 <div className="input-group mb-3">
                   <span className="input-group-text">Nombre</span>
                   <input
-                    name="nombre"
-                    value={formAutor.nombre}
-                    onChange={handleAutorChange}
+                    id="nombre"
                     type="text"
                     className="form-control"
-                    required
+                    aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-default"
+                    onChange={(event) => setNombreAutor(event.target.value)}
+                    value={nombreAutor}
                   />
                 </div>
                 <div className="input-group mb-3">
                   <span className="input-group-text">Apellido</span>
                   <input
-                    name="apellido"
-                    value={formAutor.apellido}
-                    onChange={handleAutorChange}
+                    id="apellido"
                     type="text"
                     className="form-control"
-                    required
+                    aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-default"
+                    onChange={(event) => setApellidoAutor(event.target.value)}
+                    value={apellidoAutor}
                   />
                 </div>
-                <button type="submit" className="btn btn-block btn-primary">Registrar</button>
+
+                <div className="modal-footer">
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cerrar
+                  </button>
+                  <button type="submit" className="btn btn-primary" onClick={export_addAutor}>
+                    Add Autor
+                  </button>
+                </div>
+
               </form>
+            
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Formulario para Libro */}
-        <div className="col-lg-4 col-md-12 mb-2">
-          <div className="card">
-            <div className="card-body">
-              <form onSubmit={handleSubmitLibro}>
-                <div className="form-group">
-                  <h2>LIBRO</h2>
+      {/*     MODAL NUEVO editorial*/}
+      <div
+        className="modal fade"
+        id="ModalAddEditorial"
+        tabIndex="-1"
+        role="dialog"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="staticBackdropLabel">
+                Nuevo Autor
+              </h5>
+            </div>
+            <div className="modal-body">
+              <form>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">ID</span>
+                  <input
+                    id="nombreeditorial"
+                    type="text"
+                    className="form-control"
+                    readOnly
+                    onChange={(event) => setEditorialId(event.target.value)}
+                    value={editorialId}
+                  />
                 </div>
                 <div className="input-group mb-3">
                   <span className="input-group-text">Nombre</span>
                   <input
-                    name="nombre"
-                    value={formLibro.nombre}
-                    onChange={handleLibroChange}
+                    id="nombreeditorial"
                     type="text"
                     className="form-control"
-                    required
+                    aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-default"
+                    onChange={(event) => setNombreEditorial(event.target.value)}
+                    value={nombreEditorial}
                   />
                 </div>
+
                 <div className="input-group mb-3">
-                  <span className="input-group-text">Autor:</span>
-                  <select
-                    name="autorId"
-                    value={formLibro.autorId}
-                    onChange={handleLibroChange}
-                    className="form-control"
-                    required
-                  >
-                    <option value="">Seleccionar</option>
-                    {autores.map((autor) => (
-                      <option key={autor.autorId} value={autor.autorId}>
-                        {autor.nombre} {autor.apellido}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="input-group mb-3">
-                  <span className="input-group-text">Editorial:</span>
-                  <select
-                    name="editorialId"
-                    value={formLibro.editorialId}
-                    onChange={handleLibroChange}
-                    className="form-control"
-                    required
-                  >
-                    <option value="">Seleccionar</option>
-                    {editoriales.map((editorial) => (
-                      <option key={editorial.editorialId} value={editorial.editorialId}>
-                        {editorial.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="input-group mb-3">
-                  <span className="input-group-text">Cantidad:</span>
+                  <span className="input-group-text">Direccion:</span>
                   <input
-                    name="cantidad"
-                    value={formLibro.cantidad}
-                    onChange={handleLibroChange}
-                    type="number"
-                    className="form-control"
-                    required
-                  />
-                </div>
-                <button type="submit" className="btn btn-block btn-primary">Registrar</button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <hr />
-      <div className="row mt-4">
-        <table className="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Editorial</th>
-              <th scope="col">Autor</th>
-              <th scope="col">Cantidad</th>
-              <th scope="col">Fecha Creación</th>
-              <th scope="col">Opciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {librosList.map((libro) => (
-              <tr key={libro.libroId}>
-                <td>{libro.nombreLibro}</td>
-                <td>{libro.editorialNombre}</td> {/* Debes modificar esto si el nombre de la editorial está en otro lugar */}
-                <td>{libro.autorNombre}</td> {/* Lo mismo para el nombre del autor */}
-                <td>{libro.cantidad}</td>
-                <td>{libro.fechaCreacion}</td>
-
-                <td className="opciones">
-                  <div className="btn-group" role="group">
-                    <button
-                      type="button"
-                      className="btn btn-info"
-                      onClick={() => handleEdit(libro)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-danger"
-                      onClick={() => handleDelete(libro.libroId)}
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      {/* Modal para editar */}
-      <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div className="modal-dialog">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h5 className="modal-title" id="staticBackdropLabel">EDITAR LIBRO</h5>
-            </div>
-            <div className="modal-body">
-              <form>
-                <div className="form-group">
-                  <input
+                    id="direccioneditorial"
                     type="text"
                     className="form-control"
-                    id="libroE"
-                    value={currentLibro?.nombre || ''}
-                    onChange={(e) => setCurrentLibro({ ...currentLibro, nombre: e.target.value })}
-                    placeholder="Nombre del libro"
-                    required
+                    aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-default"
+                    onChange={(event) =>
+                      setDireccionEditorial(event.target.value)
+                    }
+                    value={direccionEditorial}
                   />
                 </div>
-                <div className="form-group">
-                  <select
-                    className="form-control"
-                    id="autorE"
-                    value={currentLibro?.autorId || ''}
-                    onChange={(e) => setCurrentLibro({ ...currentLibro, autorId: e.target.value })}
-                  >
-                    {autores.map((autor) => (
-                      <option key={autor.autorId} value={autor.autorId}>
-                        {autor.nombre} {autor.apellido}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <select
-                    className="form-control"
-                    id="editorialE"
-                    value={currentLibro?.editorialId || ''}
-                    onChange={(e) => setCurrentLibro({ ...currentLibro, editorialId: e.target.value })}
-                  >
-                    {editoriales.map((editorial) => (
-                      <option key={editorial.editorialId} value={editorial.editorialId}>
-                        {editorial.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
+
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Telefono:</span>
                   <input
-                    type="number"
+                    id="telefonoeditorial"
+                    type="text"
                     className="form-control"
-                    id="cantidadE"
-                    value={currentLibro?.cantidad || ''}
-                    onChange={(e) => setCurrentLibro({ ...currentLibro, cantidad: e.target.value })}
-                    placeholder="Cantidad"
-                    required
+                    aria-label="Sizing example input"
+                    aria-describedby="inputGroup-sizing-default"
+                    onChange={(event) =>
+                      setTelefonoEditorial(event.target.value)
+                    }
+                    value={telefonoEditorial}
                   />
                 </div>
-                <input type="hidden" id="idnes" value={currentLibro?.libroId || ''} />
+
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                  <button type="submit" className="btn btn-primary">Editar</button>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cerrar
+                  </button>
+                  <button type="submit" className="btn btn-primary" onClick={export_addEditorial}>
+                    Add Autor
+                  </button>
                 </div>
+
               </form>
+              
             </div>
           </div>
         </div>
@@ -399,4 +612,4 @@ const LibraryManagement = () => {
   );
 };
 
-export default LibraryManagement;
+export default Libros;

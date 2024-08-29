@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import './App.css';
-import "bootstrap/dist/css/bootstrap.min.css";
+import "./App.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min';
 import "./css/sb-admin-2.css";
 import "./css/sb-admin-2.min.css";
 import Swal from "sweetalert2";
@@ -9,11 +10,19 @@ import Axios from "axios";
 // Componente para la gestión de libros
 const Editorial = () => {
 
+  // Definición de estados para manejar los datos del editorial y la lista de editoriales
+  const [editorialId, setEditorialId] = useState(null);
+  const [nombreEditorial, setNombreEditorial] = useState('');
+  const [direccionEditorial, setDireccionEditorial] = useState('');
+  const [telefonoEditorial, setTelefonoEditorial] = useState('');
   const [editoriales, setEditoriales] = useState([]);
-  const [nombreEditorial, setNombreEditorial] = useState([]);
-  const [direEditorial, setDireEditorial] = useState([]);
-  const [teleEditorial, setTeleEditorial] = useState([]);
 
+  // Función para limpiar los campos de entrada
+  const limpiarCampos = () => {
+    setNombreEditorial("");
+    setDireccionEditorial("");
+    setTelefonoEditorial(""); // Limpia el ID del autor para la edición
+  };
 
   // Función para obtener las editoriales y autores
   const getEditoriales = () => {
@@ -26,17 +35,17 @@ const Editorial = () => {
       });
   };
 
-  // Function to add editorial
-  const addEditoriales = () => {
-    if (nombreEditorial === "" || direEditorial === "" || teleEditorial === "") {
+  // Función para agregar un nuevo autor
+  const addEditorial = () => {
+    if (nombreEditorial === "") {
       Swal.fire({
-        icon: "danger",
-        title: "Errrado",
-        text: `campos vacios`,
+        icon: "error",
+        title: "Oops...",
+        text: "Uno o más campos están vacíos. ¡Verifique!",
         toast: true,
         position: "top-end",
         showConfirmButton: false,
-        timer: 3000,
+        timer: 4000,
         timerProgressBar: true,
       });
     } else {
@@ -51,184 +60,288 @@ const Editorial = () => {
         timerProgressBar: true,
       });
 
+      // Realiza una solicitud POST para agregar el autor
       Axios.post("http://localhost:3001/add_editoriales", {
         nombreEditorial,
-        direEditorial,
-        teleEditorial,
-
-      }).then(() => {
-        getEditoriales();
+        direccionEditorial,
+        telefonoEditorial,
       })
+        .then(() => {
+          getEditoriales(); // Actualiza la lista de editoriales
+        })
         .catch((error) => {
           console.error("Hubo un error al registrar:", error);
           Swal.fire({
-            icon: "warning",
-            title: "Oops...",
-            text: "Something went wrong!",
+            icon: "error",
+            title: "Error",
+            text: "Hubo un error al registrar la editorial.",
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
           });
         });
     }
   };
 
+  // Función para actualizar un editorial
+  const updateEditoriales = (editorialId) => {
+
+      Axios.put(`http://localhost:3001/update_editoriales/${editorialId}`, {
+        editorialId,
+        nombreEditorial,
+        direccionEditorial,
+        telefonoEditorial,
+      })
+        .then(() => {
+          Swal.fire({
+            title: "Actualizado!",
+            html: `<strong>${nombreEditorial}</strong> se ha actualizado`,
+            icon: "success",
+            timer: 4000,
+          });
+          getEditoriales();
+          limpiarCampos();
+        })
+        .catch((error) => {
+          console.error("Error al actualizar la editorial:", error);
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Hubo un error al actualizar la editorial.",
+            toast: true,
+            position: "top-end",
+            showConfirmButton: false,
+            timer: 4000,
+            timerProgressBar: true,
+          });
+        });
+  };
+
+  // Hook para cargar los autores al montar el componente
   useEffect(() => {
     getEditoriales();
   }, []);
 
+  // Función para eliminar un editorial
+  const deleteEditorial = (editorialId, nombreEditorial) => {  // Añade nombre como argumento
+
+    Axios.delete(`http://localhost:3001/delete_editoriales/${editorialId}`)
+      .then(() => {
+        Swal.fire({
+          title: "Eliminar!",
+          html: `<strong>${nombreEditorial}</strong> se ha eliminado`,
+          icon: "success",
+          timer: 4000,
+        });
+        getEditoriales();
+      })
+      .catch((error) => {
+        console.error("Hubo un error al eliminar el nombre Editorial:", error);
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: "Hubo un error al eliminar el usuario.",
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false,
+          timer: 4000,
+          timerProgressBar: true,
+        });
+      });
+  };
 
   return (
-    <div>
-      <div className="row mt-5">
-        {/* Formulario para Editorial */}
-        <div className="col-lg-4 col-md-12 mb-2">
-          <div className="card">
-            <div className="card-body">
-              <form >
-                <div className="form-group">
-                  <h2>EDITORIAL</h2>
-                </div>
-                <div className="input-group mb-3">
-                  <span className="input-group-text">Editorial</span>
-                  <input
-                    id="editorial"
-                    type="text"
-                    className="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-default"
-                    onChange={(event) => setNombreEditorial(event.target.value)}
-                  />
-                </div>
-                <div className="input-group mb-3">
-                  <span className="input-group-text">Dirección Editorial</span>
-                  <input
-                    name="direccion"
-                    type="text"
-                    className="form-control"
-                  />
-                </div>
-                <div className="input-group mb-3">
-                  <span className="input-group-text">Teléfono Editorial</span>
-                  <input
-                    name="telefono"
-                    type="text"
-                    className="form-control"
-                  />
-                </div>
+    <div className="container-fluid">
+      <div className="container">
+        <div className="card text-center">
+          <div className="card-header">Registra Nuevo Editorial</div>
+          <div className="card-body">
+            <form >
 
-              </form>
-              <button type="submit" className="btn btn-block btn-primary"
-                onClick={addEditoriales}>Registrar</button>
-            </div>
+            <div className="input-group mb-3">
+                <span className="input-group-text">ID</span>
+                <input
+                  id="nombreeditorial"
+                  type="text"
+                  className="form-control"
+                  readOnly
+                  onChange={(event) => setEditorialId(event.target.value)}
+                  value={editorialId}
+                />
+              </div>
+              <div className="input-group mb-3">
+                <span className="input-group-text">Nombre</span>
+                <input
+                  id="nombreeditorial"
+                  type="text"
+                  className="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-default"
+                  onChange={(event) => setNombreEditorial(event.target.value)}
+                  value={nombreEditorial}
+                />
+              </div>
+
+              <div className="input-group mb-3">
+                <span className="input-group-text">Direccion:</span>
+                <input
+                  id="direccioneditorial"
+                  type="text"
+                  className="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-default"
+                  onChange={(event) => setDireccionEditorial(event.target.value)}
+                  value={direccionEditorial}
+                />
+              </div>
+
+              <div className="input-group mb-3">
+                <span className="input-group-text">Telefono:</span>
+                <input
+                  id="telefonoeditorial"
+                  type="text"
+                  className="form-control"
+                  aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-default"
+                  onChange={(event) => setTelefonoEditorial(event.target.value)}
+                  value={telefonoEditorial}
+                />
+              </div>
+
+            </form>
+            <button type="submit" className="btn btn-block btn-primary"
+              onClick={addEditorial}>Registrar</button>
           </div>
         </div>
-
-
       </div>
 
-      <hr />
-      <div className="row mt-4">
-        <table className="table table-hover">
-          <thead>
-            <tr>
-              <th scope="col">Id</th>
-              <th scope="col">Editorial</th>
-              <th scope="col">Direccion</th>
-              <th scope="col">telefono</th>
-              <th scope="col">Opciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            {editoriales.map((editorial) => (
-              <tr key={editorial.editorialId}>
-                <td>{editorial.editorialId}</td>
-                <td>{editorial.nombreEditorial}</td>
-                <td>{editorial.direccioEditorial}</td>
-                <td>{editorial.telefonoEditorial}</td>
 
-                <td className="opciones">
-                  <div className="btn-group" role="group">
-                    <button
-                      type="button"
-                      className="btn btn-info"
-                    >
-                      Editar
-                    </button>
-                    <button
-                      type="button"
-                      className="btn btn-danger"
-                    >
-                      Eliminar
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <hr />
+      <div id="tablausers" className="card shadow mb-4">
+        <div className="card-header py-3">
+          <h6 id='titablausers' className="m-0 font-weight-bold text-primary">Editoriales</h6>
+        </div>
+        <div className="card-body">
+          <div className="table-responsive">
+            <table className="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Editorial</th>
+                  <th scope="col">Direccion</th>
+                  <th scope="col">telefono</th>
+                  <th scope="col">Opciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {editoriales.map((editorial) => (
+                  <tr key={editorial.editorialId}>
+                    <td>{editorial.editorialId}</td>
+                    <td>{editorial.nombreEditorial}</td>
+                    <td>{editorial.direccionEditorial}</td>
+                    <td>{editorial.telefonoEditorial}</td>
+
+                    <td className="opciones">
+                      <div className="btn-group" role="group">
+                        <button
+                          type="button"
+                          className="btn btn-info" data-bs-toggle="modal" data-bs-target="#Modaleditorial"
+                          onClick={() => {
+                            setNombreEditorial(editorial.nombreEditorial);
+                            setDireccionEditorial(editorial.direccionEditorial);
+                            setTelefonoEditorial(editorial.telefonoEditorial); // Establece el ID del editoriaal para editar
+                          }}
+                        >Editar
+                        </button>
+                        <button
+                          type="button" className="btn btn-danger"
+                          onClick={() => deleteEditorial(editorial.editorialId)}
+                        >
+                          Eliminar
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       {/* Modal para editar */}
-      <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div className="modal fade" id="Modaleditorial" tabIndex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title" id="staticBackdropLabel">EDITAR LIBRO</h5>
+              <h5 className="modal-title" id="editAutorModalLabel">EDITAR Editorial</h5>
             </div>
             <div className="modal-body">
-              <form>
-                <div className="form-group">
+              <form onSubmit={updateEditoriales}>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">ID</span>
                   <input
-                    type="text"
-                    className="form-control"
-                    id="libroE"
-                    placeholder="Nombre del libro"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <select
-                    className="form-control"
-                    id="autorE"
-                  >
-                    {editoriales.map((autor) => (
-                      <option key={autor.autorId} value={autor.autorId}>
-                        {autor.nombre} {autor.apellido}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <select
-                    className="form-control"
-                    id="editorialE"
-                  >
-                    {editoriales.map((editorial) => (
-                      <option key={editorial.editorialId} value={editorial.editorialId}>
-                        {editorial.nombre}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="form-group">
-                  <input
+                    id="editorialid"
                     type="number"
                     className="form-control"
-                    id="cantidadE"
-                    placeholder="Cantidad"
+                    readOnly
+                    onChange={(event) => setEditorialId(event.target.value)}
+                    value={editorialId}
+                  />
+                </div>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Nombre</span>
+                  <input
+                    id="nombreedito"
+                    type="text"
+                    className="form-control"
+                    onChange={(event) => setNombreEditorial(event.target.value)}
+                    value={nombreEditorial}
                     required
                   />
                 </div>
-                <input type="hidden" id="idnes" value={editoriales?.editorialId || ''} />
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Dirección</span>
+                  <input
+                    id="direedito"
+                    type="text"
+                    className="form-control"
+                    onChange={(event) => setDireccionEditorial(event.target.value)}
+                    value={direccionEditorial}
+                    required
+                  />
+                </div>
+                <div className="input-group mb-3">
+                  <span className="input-group-text">Teléfono</span>
+                  <input
+                    id="teleedito"
+                    type="text"
+                    className="form-control"
+                    onChange={(event) => setTelefonoEditorial(event.target.value)}
+                    value={telefonoEditorial}
+                    required
+                  />
+                </div>
                 <div className="modal-footer">
+                  <button type="submit" className="btn btn-primary">Actualizar</button>
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                  <button type="submit" className="btn btn-primary">Editar</button>
                 </div>
               </form>
             </div>
           </div>
         </div>
       </div>
+
     </div>
+
+
   );
 };
+
+export function export_addEditorial(i,nombre,direccion,telefono) { }
+
 
 export default Editorial;

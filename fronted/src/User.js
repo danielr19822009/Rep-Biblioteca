@@ -178,7 +178,6 @@ const PeopleManagement = () => {
 
   return (
     <div className="container-fluid">
-      {/* Formulario para registrar usuarios */}
       <div className="container">
         <div className="card text-center">
           <div className="card-header">Registra Nuevo Usuario</div>

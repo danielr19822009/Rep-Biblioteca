@@ -23,3 +23,15 @@ width: 100px;
 .container{
   width: 60%;
 }
+
+#fecha{
+  width: 30%;
+}
+
+#tituloprin{
+  text-align: center; /* Centra el título horizontalmente */
+  font-family: 'Arial', sans-serif; /* Usa una fuente amigable */
+  font-size: 2.5rem; /* Tamaño de la fuente */
+  color: #2c3e50; /* Color del texto */
+  margin: 20px 0; /* Espacio alrededor del título */
+}
