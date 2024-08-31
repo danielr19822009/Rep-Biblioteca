@@ -127,7 +127,7 @@ const Editar_Autor = () => {
     }
 
     Axios.put("http://localhost:3001/update_autor", {
-      autorId: autorid,
+      autorId:autorid,
       nombreAutor,
       apellidoAutor
     })
@@ -178,6 +178,7 @@ const Editar_Autor = () => {
             <table className="table table-bordered" id="dataTable" width="100%" cellSpacing="0">
               <thead>
                 <tr>
+                  <th scope="col">Id</th>
                   <th scope="col">Nombre</th>
                   <th scope="col">Apellido</th>
                   <th scope="col">Opciones</th>
@@ -186,6 +187,7 @@ const Editar_Autor = () => {
               <tbody>
                 {autores.map((autor) => (
                   <tr key={autor.autorId}>
+                    <td>{autor.autorId}</td>
                     <td>{autor.nombreAutor}</td>
                     <td>{autor.apellidoAutor}</td>
                     <td className="opciones">
@@ -194,6 +196,7 @@ const Editar_Autor = () => {
                           type="button"
                           className="btn btn-info"
                           onClick={() => {
+                            setAutorid(autor.autorId);
                             setNombreAutor(autor.nombreAutor);
                             setApellidoAutor(autor.apellidoAutor);
                             setAutorid(autor.autorId); // Establece el ID del autor para editar

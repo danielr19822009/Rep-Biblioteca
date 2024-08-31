@@ -1,22 +1,26 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min";
 import "./css/sb-admin-2.css";
 import "./css/sb-admin-2.min.css";
 import "./AddAutor";
-import Add_Autor from "./AddAutor"; // Asegúrate de que la ruta sea correcta
-import Add_Editorial from "./AddEditorial"; // Asegúrate de que la ruta sea correcta
+import Add_Autor from "./AddAutor"; // importo el archivo addautor.js para usar el componente 
+import Add_Editorial from "./AddEditorial"; // importo el archivo add editorial.js para usar el componente 
 
 import Swal from "sweetalert2";
 import Axios from "axios";
 
-// Importa la función desde el archivo functions.js
-const export_addAutor = require("./AddAutor.js");
-const export_addEditorial = require("./EditarEditorial.js");
+
 
 // Componente para la gestión de la biblioteca
 const Add_Libro = () => {
+  
+  useEffect(() => {
+    getLibros();
+    getautores();
+    getEditoriales();
+
+  }, []);
   const [libroId, setlibroId] = useState("");
   const [nombrelibro, setnombrelibro] = useState("");
   const [nombreautor, setnombreautor] = useState("");
@@ -26,15 +30,15 @@ const Add_Libro = () => {
 
   // del modal autor
   // Definición de estados para manejar los datos del autor y la lista de autores
-  const [autorid, setAutorid] = useState("");
-  const [nombreAutor, setNombreAutor] = useState("");
-  const [apellidoAutor, setApellidoAutor] = useState("");
+  // const [autorid, setAutorid] = useState("");
+  // const [nombreAutor, setNombreAutor] = useState("");
+  // const [apellidoAutor, setApellidoAutor] = useState("");
 
-  // Definición de estados para manejar los datos del editorial y la lista de editoriales
-  const [editorialId, setEditorialId] = useState(null);
-  const [nombreEditorial, setNombreEditorial] = useState("");
-  const [direccionEditorial, setDireccionEditorial] = useState("");
-  const [telefonoEditorial, setTelefonoEditorial] = useState("");
+  // // Definición de estados para manejar los datos del editorial y la lista de editoriales
+  // const [editorialId, setEditorialId] = useState(null);
+  // const [nombreEditorial, setNombreEditorial] = useState("");
+  // const [direccionEditorial, setDireccionEditorial] = useState("");
+  // const [telefonoEditorial, setTelefonoEditorial] = useState("");
 
   //listas data
   const [listalibros, setListalibros] = useState([]);
@@ -47,15 +51,13 @@ const Add_Libro = () => {
       .then((response) => {
         console.log("Libros obtenidos:", response.data); // Verifica los datos
         setListalibros(response.data);
-        setlistaautor(response.data);
-        setlistaeditorial(response.data);
       })
       .catch((error) => {
         console.error("Hubo un error al obtener los libros:", error);
       });
   };
 
-  // Función para obtener las editoriales
+// Función para obtener las editoriales
   const getEditoriales = () => {
     Axios.get("http://localhost:3001/get_libros_editoriales")
       .then((response) => {
@@ -79,102 +81,52 @@ const Add_Libro = () => {
       });
   };
 
-  useEffect(() => {
-    getLibros();
-    getautores();
-    getEditoriales();
-  }, []);
+  
+  // Función para Add los Libros
 
   const addLibro = (e) => {
     e.preventDefault();
-
-    console.log({
-      nombrelibro,
-      nombreautor,
-      nombreeditorial,
-      cantidad,
-      fecha,
-    });
-
-    Axios.post("http://localhost:3001/add_libro", {
-      nombrelibro,
-      nombreautor,
-      nombreeditorial,
-      cantidad,
-      fecha,
-    })
-      .then((response) => {
-        Swal.fire("Éxito", "Libro registrado exitosamente", "success");
-        setnombrelibro("");
-        setnombreeditorial("");
-        setnombreautor("");
-        setCantidad("");
-        setFecha("");
-        getLibros();
-        getEditoriales();
-        getautores();
+    if (nombrelibro === "" || nombreautor === "" || nombreeditorial === "" || cantidad === "" || fecha === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        html: `Uno o Mas Campos Estan Vacios `,
+        timer: 3000,
       })
-      .catch((error) => {
-        console.error("Error al registrar el libro:", error);
-      });
-  };
-
-  const updateLibro = (e) => {
-    e.preventDefault();
-    Axios.put(`http://localhost:3001/update_libro/${libroId}`, {
-      libroId,
-      nombrelibro,
-      nombreeditorial,
-      nombreautor,
-      cantidad,
-      fecha,
-    })
-      .then((response) => {
-        Swal.fire("Éxito", "Libro actualizado exitosamente", "success");
-        setnombrelibro("");
-        setnombreeditorial("");
-        setnombreautor("");
-        setCantidad("");
-        setFecha("");
-        getLibros();
-        getEditoriales();
-        getautores();
+    } else {
+      Axios.post("http://localhost:3001/add_libro", {
+        nombrelibro,
+        nombreautor,
+        nombreeditorial,
+        cantidad,
+        fecha,
       })
-      .catch((error) => {
-        console.error("Error al actualizar el libro:", error);
-      });
-  };
+        .then((response) => {
+          //Menasje sweetalert  de Creacion de Libro correcta
+          Swal.fire({
+            title: "Good job!",
+            html: `<strong>${nombrelibro}</strong>, Registrado Con Exito`,
+            icon: "success",
+            timer: 3000,
 
-  // Función para eliminar un editorial
-  const deleteLibro = (libroId, nombrelibro) => {
-    // Añade nombre como argumento
-
-    Axios.delete(`http://localhost:3001/delete_libros/${libroId}`)
-      .then(() => {
-        Swal.fire({
-          title: "Eliminar!",
-          html: `<strong>${nombrelibro}</strong> se ha eliminado`,
-          icon: "success",
-          timer: 4000,
+          })
+          setnombrelibro("");
+          setnombreeditorial("");
+          setnombreautor("");
+          setCantidad("");
+          setFecha("");
+          getLibros();
+          getEditoriales();
+          getautores();
+        })
+        .catch((error) => {
+          console.error("Error al registrar el libro:", error);
         });
-        getEditoriales();
-        getLibros();
-        getautores();
-      })
-      .catch((error) => {
-        console.error("Hubo un error al eliminar el nombre Editorial:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Hubo un error al eliminar el usuario.",
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 4000,
-          timerProgressBar: true,
-        });
-      });
+
+    }
+
   };
+
 
   return (
     <div className="container-fluid">
@@ -238,7 +190,6 @@ const Add_Libro = () => {
                       {editoriales.nombreEditorial}{" "}
                     </option>
                   ))}
-                  <option value=""> Add Editorial </option>
                 </select>
                 <button
                   type="button"
@@ -299,13 +250,13 @@ const Add_Libro = () => {
       >
         <div className="modal-dialog">
           <div className="modal-content">
-            
+
             <div className="modal-body">
-            <Add_Autor />
+              <Add_Autor />
             </div>
             <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
           </div>
         </div>
       </div>
@@ -322,13 +273,13 @@ const Add_Libro = () => {
       >
         <div className="modal-dialog">
           <div className="modal-content">
-            
+
             <div className="modal-body">
-            <Add_Editorial />
+              <Add_Editorial />
             </div>
             <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                </div>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
           </div>
         </div>
       </div>

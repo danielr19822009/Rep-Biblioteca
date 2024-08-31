@@ -2,8 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 
+import "../css/sb-admin-2.css";
+import "../css/sb-admin-2.min.css";
+
+
 const Sidebar = () => {
     return (
+        <body id="page-top">
         <ul className="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
             {/* Sidebar Brand */}
             <a className="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
@@ -128,7 +133,21 @@ const Sidebar = () => {
 
             <hr className="sidebar-divider" />
 
+            <div class="text-center d-md-inline">
+                <button class="rounded-circle border-0" id="sidebarToggle"></button>
+            </div>
+
+                    <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+                        <i class="fa fa-bars"></i>
+                    </button>
+
+            <a class="scroll-to-top rounded" href="#page-top">
+                <i class="fas fa-angle-up"></i>
+            </a>
         </ul>
+
+      
+        </body>
     );
 };
 

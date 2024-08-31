@@ -2,6 +2,10 @@
 import React, { useState } from 'react';
 
 import './login.css';
+import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import './css/sb-admin-2.min.css';
+import './css/sb-admin-2.css';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -23,7 +27,7 @@ function Login() {
     <div className={'mainContainer'}>
     <form onSubmit={handleSubmit}>
      <div className={'titleContainer'}>
-        <div> Library SM</div>
+        <div> Biblio`Cloud SM</div>
       </div>
 
       <div className={'inputContainer'}>
@@ -49,7 +53,8 @@ function Login() {
         />
       </div>
       <div className={'inputContainer'}>
-        <input className={'inputButton'} type="button" onClick={onButtonClick} value={'Log in'} />
+      <button class="btn btn-primary" type="button">Log In</button>
+    
       </div>
     </form>
     </div>

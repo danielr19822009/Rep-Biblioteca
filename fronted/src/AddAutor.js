@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min';
 import "./css/sb-admin-2.css";
 import "./css/sb-admin-2.min.css";
 import Swal from "sweetalert2";
@@ -23,45 +22,31 @@ const Add_Autor = () => {
         icon: "error",
         title: "Oops...",
         text: "Uno o más campos están vacíos. ¡Verifique!",
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 4000,
-        timerProgressBar: true,
+        showConfirmButton: true,
       });
     } else {
-      Swal.fire({
-        icon: "success",
-        title: "Registrado",
-        html: `<strong>${nombreAutor}</strong>, Registrado`,
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 3000,
-        timerProgressBar: true,
-      });
-
-      // Realiza una solicitud POST para agregar el autor
+ // Realiza una solicitud POST para agregar el autor
       Axios.post("http://localhost:3001/add_autores", {
         nombreAutor,
         apellidoAutor,
       })
+      Swal.fire({
+        title: "Good job!",
+        html: `<strong>${nombreAutor + ' '+ apellidoAutor }</strong>,  Registrado`,
+        icon: "success"
+      })
+
         .then(() => {
-          getAutores(); // Actualiza la lista de autores
-          setNombreAutor(""); // Limpia los campos
-          setApellidoAutor("");
+          getAutores() // Actualiza la lista de autores
+
+          limpiarcampos(); 
         })
         .catch((error) => {
           console.error("Hubo un error al registrar:", error);
           Swal.fire({
-            icon: "error",
-            title: "Error",
-            text: "Hubo un error al registrar la persona.",
-            toast: true,
-            position: "top-end",
-            showConfirmButton: false,
-            timer: 4000,
-            timerProgressBar: true,
+            title: "Bad job!",
+            html: `<strong>${nombreAutor + ' '+ apellidoAutor }</strong>, No fue posible el Registro`,
+            icon: "error"
           });
         });
     }
@@ -81,83 +66,12 @@ const Add_Autor = () => {
   // Hook para cargar los autores al montar el componente
   useEffect(() => {
     getAutores();
+    limpiarcampos();
   }, []);
 
-  // Función para eliminar un autor
-  const deleteAutor = (autorId) => {
-    Axios.delete(`http://localhost:3001/delete_autor/${autorId}`)
-      .then((response) => {
-        Swal.fire({
-          title: "Eliminado!",
-          text: response.data,
-          icon: "success",
-          timer: 4000,
-        });
-        getAutores(); // Actualiza la lista de autores después de eliminar
-      })
-      .catch((error) => {
-        console.error("Hubo un error al eliminar el autor:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Hubo un error al eliminar el autor.",
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 4000,
-          timerProgressBar: true,
-        });
-      });
-  };
-
-  // Función para actualizar un autor
-  const updateAutores = () => {
-    if (!nombreAutor || !apellidoAutor || !autorid) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "Por favor, complete todos los campos.",
-        toast: true,
-        position: "top-end",
-        showConfirmButton: false,
-        timer: 4000,
-        timerProgressBar: true,
-      });
-      return;
-    }
-
-    Axios.put("http://localhost:3001/update_autor", {
-      autorId: autorid,
-      nombreAutor,
-      apellidoAutor
-    })
-      .then(() => {
-        Swal.fire({
-          title: "Actualizado!",
-          html: `<strong>${nombreAutor}</strong> Se ha actualizado`,
-          icon: "success",
-          timer: 4000,
-        });
-        getAutores(); // Actualiza la lista de autores después de la actualización
-        clear(); // Limpia los campos
-      })
-      .catch((error) => {
-        console.error("Hubo un error al actualizar el autor:", error);
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: "Hubo un error al actualizar el autor.",
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 4000,
-          timerProgressBar: true,
-        });
-      });
-  };
 
   // Función para limpiar los campos de entrada
-  const clear = () => {
+  const limpiarcampos = () => {
     setNombreAutor("");
     setApellidoAutor("");
     setAutorid(""); // Limpia el ID del autor para la edición
@@ -213,12 +127,12 @@ const Add_Autor = () => {
 };
 
 
-export function export_addAutor(nombre,apellido) {
-    // Realiza una solicitud POST para agregar el autor
-    Axios.post("http://localhost:3001/add_autores", {
-      nombre,
-      apellido,
-    })
-}
+// export function export_addAutor(nombre,apellido) {
+//     // Realiza una solicitud POST para agregar el autor
+//     Axios.post("http://localhost:3001/add_autores", {
+//       nombre,
+//       apellido,
+//     })
+// }
 
 export default Add_Autor;

@@ -86,7 +86,6 @@ const Editar_Editorial = () => {
   };
 
   // Función para actualizar un editorial
-  // Función para actualizar un autor
   const updateEditoriales = () => {
     if (!nombreEditorial || !direccionEditorial || !telefonoEditorial || !editorialid) {
       Swal.fire({

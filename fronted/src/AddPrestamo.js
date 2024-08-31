@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.bundle.min";
 import "./css/sb-admin-2.css";
 import "./css/sb-admin-2.min.css";
 import "./AddAutor";
@@ -62,40 +61,42 @@ function Add_Prestamo() {
       });
   };
 
-  const addprestamo = (e) => {
-    e.preventDefault();
-    console.log({
-      usuario,
-      libro,
-      estado,
-      fechaprestamo,
-      fechadevolucion,
-    });
+  const addprestamo = () => {
 
-    Axios.post("http://localhost:3001/add_prestamo", {
-      usuario,
-      libro,
-      estado,
-      fechaprestamo,
-      fechadevolucion,
-    })
-      .then((response) => {
-        Swal.fire("Éxito", "Libro registrado exitosamente", "success");
-        setusuario("");
-        setLibro("");
-        setestado("");
-        setfechadevolucion("");
-        setfechaprestamo("");
-        getPrestamos();
-        getLibros();
-        getusuarios();
-      })
-      .catch((error) => {
-        console.error("Error al registrar el libro:", error);
-      });
-  };
+    if(usuario==='' || libro===''  || estado===''  || fechaprestamo===''  || fechadevolucion==='' ){
+          Swal.fire({
+            icon: "error",
+            title: "Error",
+            text: "Diligencie Todos Los Campos.",
+            showConfirmButton: true,
+        })
+      }else{
+          console.log({usuario,libro,estado,fechaprestamo,fechadevolucion, });
+          Axios.post("http://localhost:3001/add_prestamo", {
+            usuario,
+            libro,
+            estado,
+            fechaprestamo,
+            fechadevolucion,
+          })
+          .then((response) => {
+            Swal.fire("Éxito", "Prestamo registrado exitosamente", "success");
+            setusuario("");
+            setLibro("");
+            setestado("");
+            setfechadevolucion("");
+            setfechaprestamo("");
+            getPrestamos();
+            getLibros();
+            getusuarios();
+          })
+          .catch((error) => {
+            console.error("Error al registrar el libro:", error);
+          });
+      };
 
-  
+    }
+    
   useEffect(() => {
     getPrestamos();
     getLibros();
@@ -111,7 +112,7 @@ function Add_Prestamo() {
             <form method="POST" id="reg-pdo">
               <div className="input-group mb-3">
                 <span className="input-group-text">Usuario:</span>
-                <select
+                <select required
                   name="usuario"
                   className="form-control"
                   id="usuario"
@@ -128,7 +129,7 @@ function Add_Prestamo() {
               </div>
               <div className="input-group mb-3">
                 <span className="input-group-text">Libro:</span>
-                <select
+                <select required
                   name="autorId"
                   className="form-control"
                   id="autorId"
@@ -146,37 +147,21 @@ function Add_Prestamo() {
 
               <div className="input-group mb-3">
                 <span className="input-group-text">Estado Libro</span>
-                <input
+                <input required
                   id="nombrelibro"
                   type="text"
                   className="form-control"
-                  required
                   value={estado}
                   onChange={(event) => setestado(event.target.value)}
                 />
               </div>
 
-              {/* <div className='form-group'>
-                <select className='form-control' id='cant-pdts' placeholder="Dias" 
-                onChange={(event) =>{
-                    setDias(event.target.value);
-                }}>
-                  {dayOptions.map(day => (
-                     <option key={day} value={day}>
-                       {day}
-                       {day === 1 ? ' día ' : ' días'}
-                     </option>
-                   ))}
-                </select>
-              </div> */}
-
               <div className="input-group mb-3" id="fecha">
                 <span className="input-group-text">Fecha Prestamo:</span>
-                <input
+                <input required
                   id="fechaprestamo"
                   type="date"
                   className="form-control"
-                  required
                   value={fechaprestamo}
                   onChange={(e) => setfechaprestamo(e.target.value)}
                 />
@@ -187,7 +172,6 @@ function Add_Prestamo() {
                   id="fechadevolucion"
                   type="date"
                   className="form-control"
-                  required
                   value={fechadevolucion}
                   onChange={(e) => setfechadevolucion(e.target.value)}
                 />
