@@ -23,7 +23,7 @@ width: 100px;
 }
 
 #fecha{
-  width: 30%;
+  width: 60%;
 }
 
 #tituloprin{
@@ -34,6 +34,3 @@ width: 100px;
   margin: 20px 0; /* Espacio alrededor del título */
 }
 
-.btn-add{
-  width: 30%;
-}

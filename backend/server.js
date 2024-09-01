@@ -41,14 +41,11 @@ app.post('/add_users', (req, res) => {
 
 
 app.put('/update_users', (req, res) => {
-    const id = req.body.id;
-    const cedula = req.body.cedula;
-    const nombre = req.body.nombre;
-    const direccion = req.body.direccion;
-    const telefono = req.body.telefono;
+    const { idUser, cedula, nombre, direccion, telefono } = req.body;
+
 
     //query para enviar los datos a la base de datos
-    db.query('update users set cedula=?,nombre=?,direccion=?,telefono=? where usuarioId=?', [cedula, nombre, direccion, telefono, id],
+    db.query('update users set cedula=?, nombre=?, direccion=?, telefono=? where usuarioId=?', [cedula, nombre, direccion, telefono, idUser],
         (err, result) => {
             if (err) {
                 console.log(err);
@@ -94,7 +91,7 @@ app.get('/get_users', (req, res) => {
 
 // Agregar un autor
 app.post('/add_autores', (req, res) => {
-    const nombreAutor  = req.body.nombreAutor;
+    const nombreAutor = req.body.nombreAutor;
     const apellidoAutor = req.body.apellidoAutor;
     console.log('Autor' + nombreAutor);
     db.query('INSERT INTO autor (nombreAutor, apellidoAutor) VALUES (?, ?)', [nombreAutor, apellidoAutor], (err, result) => {
@@ -123,39 +120,39 @@ app.get('/get_autores', (req, res) => {
 app.put('/update_autor', (req, res) => {
     const { autorId, nombreAutor, apellidoAutor } = req.body;
     db.query('UPDATE autor SET nombreAutor = ?, apellidoAutor = ? WHERE autorId = ?', [nombreAutor, apellidoAutor, autorId],
-      (err, result) => {
-        if (err) {
-          console.error('Error al actualizar el autor:', err);
-          return res.status(500).send('Error al actualizar el autor.');
+        (err, result) => {
+            if (err) {
+                console.error('Error al actualizar el autor:', err);
+                return res.status(500).send('Error al actualizar el autor.');
+            }
+            if (result.affectedRows === 0) {
+                return res.status(404).send('Autor no encontrado.');
+            }
+            res.send('Autor actualizado con éxito.');
         }
-        if (result.affectedRows === 0) {
-          return res.status(404).send('Autor no encontrado.');
-        }
-        res.send('Autor actualizado con éxito.');
-      }
     );
-  });
-  
-  // Endpoint para eliminar un autor
-  app.delete('/delete_autor/:autorId', (req, res) => {
+});
+
+// Endpoint para eliminar un autor
+app.delete('/delete_autor/:autorId', (req, res) => {
     const autorId = req.params.autorId;
-  
+
     db.query(
-      'DELETE FROM autor WHERE autorId = ?',
-      [autorId],
-      (err, result) => {
-        if (err) {
-          console.error('Error al eliminar el autor:', err);
-          return res.status(500).send('Error al eliminar el autor.');
+        'DELETE FROM autor WHERE autorId = ?',
+        [autorId],
+        (err, result) => {
+            if (err) {
+                console.error('Error al eliminar el autor:', err);
+                return res.status(500).send('Error al eliminar el autor.');
+            }
+            if (result.affectedRows === 0) {
+                return res.status(404).send('Autor no encontrado.');
+            }
+            res.send('Autor eliminado con éxito.');
         }
-        if (result.affectedRows === 0) {
-          return res.status(404).send('Autor no encontrado.');
-        }
-        res.send('Autor eliminado con éxito.');
-      }
     );
-  });
-  
+});
+
 ///////////////////////fin Autor
 
 
@@ -181,45 +178,44 @@ app.post('/add_editoriales', (req, res) => {
     const nombreEditorial = req.body.nombreEditorial;
     const direccionEditorial = req.body.direccionEditorial;
     const telefonoEditorial = req.body.telefonoEditorial;
-  
+
     // Debugging information (Optional, remove in production)
     console.log(nombreEditorial, direccionEditorial, telefonoEditorial);
-  
+
     // Insert data into the database
     db.query('INSERT INTO editorial (nombreEditorial, direccionEditorial, telefonoEditorial) VALUES (?, ?, ?)', [nombreEditorial, direccionEditorial, telefonoEditorial], (err, result) => {
-      if (err) {
-        // Log error and send error response
-        console.error('Error al agregar el editorial:', err);
-        res.status(500).send('Error al agregar el editorial');
-      } else {
-        // Send success response
-        res.send('Editorial agregado exitosamente');
-      }
-    });
-  });
-
-  // Endpoint para actualizar un autor
-app.put('/update_editoriales', (req, res) => {
-    const { editorialId, nombreEditorial, direccionEditorial,telefonoEditorial } = req.body;
-
-    alert(editorialId + nombreEditorial + direccionEditorial)
-    db.query('UPDATE editorial SET nombreEditorial = ?, direccionEditorial = ?, telefonoEditorial=? WHERE editorialId = ?', 
-        [nombreEditorial, direccionEditorial, telefonoEditorial,editorialId],
-      (err, result) => {
         if (err) {
-          console.error('Error al actualizar el Editorial:', err);
-          return res.status(500).send('Error al actualizar el Editorial.');
+            // Log error and send error response
+            console.error('Error al agregar el editorial:', err);
+            res.status(500).send('Error al agregar el editorial');
+        } else {
+            // Send success response
+            res.send('Editorial agregado exitosamente');
         }
-        if (result.affectedRows === 0) {
-          return res.status(404).send('Editorial no encontrado.');
-        }
-        res.send('Editorial actualizado con éxito.');
-      }
-    );
-  });
+    });
+});
 
- // Endpoint para eliminar un editorial
- app.delete('/delete_editoriales/:editorialId', (req, res) => {
+// Endpoint para actualizar un autor
+app.put('/update_editoriales', (req, res) => {
+    const { editorialId, nombreEditorial, direccionEditorial, telefonoEditorial } = req.body;
+
+    db.query('UPDATE editorial SET nombreEditorial = ?, direccionEditorial = ?, telefonoEditorial=? WHERE editorialId = ?',
+        [nombreEditorial, direccionEditorial, telefonoEditorial, editorialId],
+        (err, result) => {
+            if (err) {
+                console.error('Error al actualizar el Editorial:', err);
+                return res.status(500).send('Error al actualizar el Editorial.');
+            }
+            if (result.affectedRows === 0) {
+                return res.status(404).send('Editorial no encontrado.');
+            }
+            res.send('Editorial actualizado con éxito.');
+        }
+    );
+});
+
+// Endpoint para eliminar un editorial
+app.delete('/delete_editoriales/:editorialId', (req, res) => {
     // Extraer el id de los parámetros de la solicitud
     const { editorialId } = req.params;
 
@@ -236,12 +232,12 @@ app.put('/update_editoriales', (req, res) => {
 
 
 // -----------  LIBROS ----------------
- // Endpoint para obtener libros
- app.get('/get_libros', (req, res) => {
+// Endpoint para obtener libros
+app.get('/get_libros', (req, res) => {
     //query para seleccionar los datos a la base de datos
-    db.query(`SELECT l.libroId, l.nombreLibro, l.autorId, l.cantidad, l.fechaCreacion, 
-       e.editorialid AS editorialid, e.nombreEditorial AS nombreEditorial , 
-        a.autorId AS autorId, a.nombreAutor AS nombreAutor , a.apellidoAutor AS apellidoAutor 
+    db.query(`SELECT l.libroId, l.nombreLibro, l.editorialId, l.autorId, l.cantidad, l.fechaCreacion, 
+        e.nombreEditorial AS nombreEditorial , 
+        a.nombreAutor AS nombreAutor , a.apellidoAutor AS apellidoAutor 
        		 FROM libro l
         			INNER JOIN  editorial e
                     		ON l.editorialId = e.editorialId 
@@ -287,64 +283,64 @@ app.get('/get_libros_editoriales', (req, res) => {
 
 // Endpoint ADD libro
 app.post('/add_libro', (req, res) => {
-    const { nombrelibro,nombreeditorial, nombreautor, cantidad, fecha } = req.body;
-  
+    const { nombrelibro, nombreeditorial, nombreautor, cantidad, fecha } = req.body;
+
     console.log({
-      nombrelibro,
-      nombreeditorial,
-      nombreautor,
-      cantidad,
-      fecha
+        nombrelibro,
+        nombreeditorial,
+        nombreautor,
+        cantidad,
+        fecha
     });
-  
+
     db.query(
-      `INSERT INTO libro (nombreLibro, editorialId, autorId, cantidad, fechaCreacion) 
+        `INSERT INTO libro (nombreLibro, editorialId, autorId, cantidad, fechaCreacion) 
        VALUES (?, ?, ?, ?, ?)`,
-      [nombrelibro, nombreeditorial, nombreautor, cantidad, fecha],
-      (err, result) => {
-        if (err) {
-          console.error('Error al agregar el libro:', err);
-          return res.status(500).send('Error al agregar el libro');
-        }
-        res.send('Libro agregado exitosamente');
-      }
-    );
-  });
-
-    // Endpoint para actualizar un libro
-    app.put('/update_libro', (req, res) => {
-        const {libroid,nombrelibro, editorialid, autorid, cantidad, fecha,} = req.body;
-    
-        if (!libroid || !nombrelibro || !editorialid || !autorid  || !cantidad || !fecha) {
-            return res.status(400).send('Todos los campos son requeridos.');
-        }
-    
-        db.query(
-            'UPDATE libro SET nombreLibro = ?, editorialId = ?, autorId = ?, cantidad = ?, fechaCreacion = ? WHERE libroId = ?',
-            [nombrelibro, editorialid, autorid, cantidad, fecha, libroid],
-            (err, result) => {
-                if (err) {
-                    console.error('Error al actualizar el Libro:', err);
-                    return res.status(500).send('Error al actualizar el Libro.');
-                }
-                if (result.affectedRows === 0) {
-                    return res.status(404).send('Libro no encontrado.');
-                }
-                res.send('Libro actualizado con éxito.');
+        [nombrelibro, nombreeditorial, nombreautor, cantidad, fecha],
+        (err, result) => {
+            if (err) {
+                console.error('Error al agregar el libro:', err);
+                return res.status(500).send('Error al agregar el libro');
             }
-        );
-    });
-    
+            res.send('Libro agregado exitosamente');
+        }
+    );
+});
 
-   // Endpoint para eliminar un libro
- app.delete('/delete_libros/:libroId', (req, res) => {
+// Endpoint para actualizar un libro
+app.put('/update_libro', (req, res) => {
+    const { libroid, nombrelibro, editorialid, autorid, cantidad, fecha, } = req.body;
+
+    if (!libroid || !nombrelibro || !cantidad || !fecha) {
+        return res.status(400).send('Todos los campos son requeridos.');
+    }
+
+    db.query(
+        'UPDATE libro SET nombreLibro = ?, cantidad = ?, fechaCreacion = ? WHERE libroId = ?',
+        [nombrelibro, cantidad, fecha, libroid],
+        (err, result) => {
+            if (err) {
+                console.error('Error al actualizar el Libro:', err);
+                return res.status(500).send('Error al actualizar el Libro.');
+            }
+            if (result.affectedRows === 0) {
+                return res.status(404).send('Libro no encontrado.');
+            }
+            res.send('Libro actualizado con éxito.');
+        }
+    );
+});
+
+
+// Endpoint para eliminar un libro
+app.delete('/delete_libros/:libroId', (req, res) => {
     // Extraer el id de los parámetros de la solicitud
     const { libroId } = req.params;
 
     // Ejecutar la consulta
     db.query('DELETE FROM libro WHERE libroid=?', [libroId], (err, result) => {
         if (err) {
-            console.error('Error al eliminar el libro:'+ id, err);
+            console.error('Error al eliminar el libro:' + id, err);
             return res.status(500).json({ error: 'Error al eliminar el libro' });
         } else {
             res.json(result);
@@ -353,7 +349,7 @@ app.post('/add_libro', (req, res) => {
 });
 
 
-///prestamos
+///----------------PRESTAMOS
 
 // Endpoint get editorial
 app.get('/get_prestamos', (req, res) => {
@@ -372,8 +368,8 @@ app.get('/get_prestamos', (req, res) => {
 
 // Endpoint ADD prestamo
 app.post('/add_prestamo', (req, res) => {
-    const { usuario,libro, estado, fechaprestamo, fechadevolucion } = req.body;
-  
+    const { usuario, libro, estado, fechaprestamo, fechadevolucion } = req.body;
+
     console.log({
         usuario,
         libro,
@@ -381,19 +377,45 @@ app.post('/add_prestamo', (req, res) => {
         fechaprestamo,
         fechadevolucion
     });
-  
+
     db.query(`INSERT INTO prestamo (usuarioId, libroId, estado, fechaFin,fechaCreacion) 
        VALUES (?, ?, ?, ?, ?)`,
-      [usuario, libro, estado, fechaprestamo, fechadevolucion],
-      (err, result) => {
-        if (err) {
-          console.error('Error al agregar el prestamo:', err);
-          return res.status(500).send('Error al agregar el prestamo');
+        [usuario, libro, estado, fechaprestamo, fechadevolucion],
+        (err, result) => {
+            if (err) {
+                console.error('Error al agregar el prestamo:', err);
+                return res.status(500).send('Error al agregar el prestamo');
+            }
+            res.send('prestamo agregado exitosamente');
         }
-        res.send('prestamo agregado exitosamente');
-      }
     );
-  });
+});
+
+
+// Endpoint para actualizar un prestamo
+app.put('/update_prestamo', (req, res) => {
+    const { Prestamoid, usuario, libro, estado, FechaPrestamo, FechaDevolucion, } = req.body;
+
+    if (!Prestamoid ) {
+        return res.status(400).send('El ID de Prestamo no Viajo al backend');
+    }
+
+    db.query(
+        'UPDATE prestamo SET estado = ?,fechaCreacion = ?, fechaFin = ? WHERE prestamoId = ?',
+        [estado,FechaPrestamo, FechaPrestamo, Prestamoid],
+        (err, result) => {
+            if (err) {
+                console.error('Error al actualizar el Prestamo:', err);
+                return res.status(500).send('Error al actualizar el Libro.');
+            }
+            if (result.affectedRows === 0) {
+                return res.status(404).send('Prestamo no encontrado.');
+            }
+            res.send('Prestamo actualizado con éxito.');
+        }
+    );
+});
+
 
 app.listen(3001, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
