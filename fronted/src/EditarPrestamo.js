@@ -59,31 +59,40 @@ function Editar_Prestamos() {
     };
 
     // Delete Prestamo
-    const deletePrestamo = (id) => {
-        Axios.delete(`http://localhost:3001/delete_prestamo/${id}`)
-            .then(() => {
-                Swal.fire({
-                    title: "Eliminar!",
-                    text: "El prestamo ha sido eliminado.",
-                    icon: "success",
-                    timer: 4000,
+const deletePrestamo = (idprestamo) => {
+    Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+        if (result.isConfirmed) {
+            Axios.delete(`http://localhost:3001/delete_prestamo/${idprestamo}`)
+                .then(() => {
+                    Swal.fire({
+                        title: "Deleted!",
+                        text: "Your file has been deleted.",
+                        icon: "success"
+                    });
+                    getPrestamos(); // Actualiza la lista de autores después de la actualización
+
+                })
+                .catch((error) => {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "There was a problem deleting the file.",
+                        icon: "error"
+                    });
+                    console.error("There was an error deleting the file:", error);
                 });
-                getPrestamos();
-            })
-            .catch((error) => {
-                console.error("Hubo un error al eliminar el prestamo:", error);
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "Hubo un error al eliminar el prestamo.",
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 4000,
-                    timerProgressBar: true,
-                });
-            });
-    };
+        }
+
+    });
+};
+
 
 
 

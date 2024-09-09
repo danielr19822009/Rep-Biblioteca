@@ -91,33 +91,43 @@ const Edit_Libro = () => {
 
 
     // Función para eliminar un libro
-    const deleteLibro = (libroId, nombrelibro) => {
-        // Añade nombre como argumento
 
-        Axios.delete(`http://localhost:3001/delete_libros/${libroId}`)
-            .then(() => {
-                Swal.fire({
-                    title: "Eliminar!",
-                    html: `<strong>${nombrelibro}</strong> se ha eliminado`,
-                    icon: "success",
-                    timer: 4000,
-                });
-                getLibros();
-            })
-            .catch((error) => {
-                console.error("Hubo un error al eliminar el nombre Editorial:", error);
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "Hubo un error al eliminar el usuario.",
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 4000,
-                    timerProgressBar: true,
-                });
-            });
+    const deleteLibro = (libroId, nombrelibro) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Axios.delete(`http://localhost:3001/delete_libros/${libroId}`)
+                    .then(() => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Your Libro has been deleted. "+ nombrelibro,
+                            icon: "success"
+                        });
+                        getLibros(); // Actualiza la lista de libros después de la actualización
+
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "There was a problem deleting the file.",
+                            icon: "error"
+                        });
+                        console.error("There was an error deleting the file:", error);
+                    });
+            }
+    
+        });
     };
+
+    
+   
 
     return (
         <div className="container-fluid">

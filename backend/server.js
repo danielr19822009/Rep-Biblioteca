@@ -416,6 +416,23 @@ app.put('/update_prestamo', (req, res) => {
     );
 });
 
+// Endpoint para eliminar un prestamo
+app.delete('/delete_prestamo/:prestamoid', (req, res) => {
+    // Extraer el id de los parámetros de la solicitud
+    const { prestamoid } = req.params;
+
+    // Ejecutar la consulta
+    db.query('DELETE FROM prestamo WHERE prestamoid=?', [prestamoid], (err, result) => {
+        if (err) {
+            console.error('Error al eliminar el PRESTAMO:' + id, err);
+            return res.status(500).json({ error: 'Error al eliminar el PRESTAMO' });
+        } else {
+            res.json(result);
+        }
+    });
+});
+
+
 
 app.listen(3001, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);

@@ -34,31 +34,41 @@ const Editar_Autor = () => {
     }, []);
 
     // Función para eliminar un autor
+
+
     const deleteAutor = (autorId) => {
-        Axios.delete(`http://localhost:3001/delete_autor/${autorId}`)
-            .then((response) => {
-                Swal.fire({
-                    title: "Eliminado!",
-                    text: response.data,
-                    icon: "success",
-                    timer: 4000,
-                });
-                getAutores(); // Actualiza la lista de autores después de eliminar
-            })
-            .catch((error) => {
-                console.error("Hubo un error al eliminar el autor:", error);
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "Hubo un error al eliminar el autor.",
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 4000,
-                    timerProgressBar: true,
-                });
-            });
+        Swal.fire({
+            title: "Estas Seguro de Eliminar ? ",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, Eliminar !"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Axios.delete(`http://localhost:3001/delete_autor/${autorId}`)
+                    .then(() => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "Autor A sido Eliminado !!!.",
+                            icon: "success"
+                        });
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Para Eliminar este Autor Debes Desasociar El libro del Autor",
+                            icon: "error"
+                        });
+                        console.error("Para Eliminar este Autor Debes Desasociar El libro del Autor:", error);
+                    });
+            }
+            getAutores(); // Actualiza la lista de autores después de eliminar
+    
+        });
     };
+
+
 
     // Función para actualizar un autor
     const updateAutores = () => {

@@ -34,55 +34,7 @@ const Editar_Editorial = () => {
             });
     };
 
-    // Función para agregar un nuevo editorial
-    const addEditorial = () => {
-        if (nombreEditorial === "") {
-            Swal.fire({
-                icon: "error",
-                title: "Oops...",
-                text: "Uno o más campos están vacíos. ¡Verifique!",
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 4000,
-                timerProgressBar: true,
-            });
-        } else {
-            Swal.fire({
-                icon: "success",
-                title: "Registrado",
-                html: `<strong>${nombreEditorial}</strong>, Registrado`,
-                toast: true,
-                position: "top-end",
-                showConfirmButton: false,
-                timer: 3000,
-                timerProgressBar: true,
-            });
-
-            // Realiza una solicitud POST para agregar el autor
-            Axios.post("http://localhost:3001/add_editoriales", {
-                nombreEditorial,
-                direccionEditorial,
-                telefonoEditorial,
-            })
-                .then(() => {
-                    getEditoriales(); // Actualiza la lista de editoriales
-                })
-                .catch((error) => {
-                    console.error("Hubo un error al registrar:", error);
-                    Swal.fire({
-                        icon: "error",
-                        title: "Error",
-                        text: "Hubo un error al registrar la editorial.",
-                        toast: true,
-                        position: "top-end",
-                        showConfirmButton: false,
-                        timer: 4000,
-                        timerProgressBar: true,
-                    });
-                });
-        }
-    };
+    
 
     // Función para actualizar un editorial
     const updateEditoriales = () => {

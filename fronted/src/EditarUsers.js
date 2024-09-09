@@ -89,32 +89,43 @@ const Editar_User = () => {
     };
 
     //funcion delete users
+
     const deleteUser = (id, nombre) => {
-        // Añade nombre como argumento
-        Axios.delete(`http://localhost:3001/delete_users/${id}`)
-            .then(() => {
-                Swal.fire({
-                    title: "Eliminar!",
-                    html: `<strong>${nombre}</strong> se ha eliminado`,
-                    icon: "success",
-                    timer: 4000,
-                });
-                getUsers();
-            })
-            .catch((error) => {
-                console.error("Hubo un error al eliminar el usuario:", error);
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "Hubo un error al eliminar el usuario.",
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 4000,
-                    timerProgressBar: true,
-                });
-            });
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Axios.delete(`http://localhost:3001/delete_users/${id}`)
+                .then(() => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            html: `Your User has been deleted.<strong>${nombre}</strong>`,
+                            icon: "success"
+                        });
+                        getUsers(); // Actualiza la lista de autores después de la actualización
+
+                    })
+
+                    .catch((error) => {
+                        Swal.fire({
+                            title: "Error!",
+                            text: `Para Eliminar este Usuario 
+                            Primero Debe Eliminar el Prestamo Asociado.`,
+                            icon: "error"
+                        });
+                        console.error("TPara Eliminar este Usuario Primero Debe Eliminar el Prestamo Asociado.:", error);
+                    });
+            }
+    
+        });
     };
+
     //fin funcion delete
 
     // UseEffect to get users
