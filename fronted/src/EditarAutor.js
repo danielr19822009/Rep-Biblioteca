@@ -53,6 +53,7 @@ const Editar_Autor = () => {
                             text: "Autor A sido Eliminado !!!.",
                             icon: "success"
                         });
+                        getAutores(); // Actualiza la lista de autores después de eliminar
                     })
                     .catch((error) => {
                         Swal.fire({
@@ -63,7 +64,7 @@ const Editar_Autor = () => {
                         console.error("Para Eliminar este Autor Debes Desasociar El libro del Autor:", error);
                     });
             }
-            getAutores(); // Actualiza la lista de autores después de eliminar
+           
     
         });
     };

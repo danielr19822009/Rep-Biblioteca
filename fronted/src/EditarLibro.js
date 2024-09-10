@@ -41,11 +41,6 @@ const Edit_Libro = () => {
     };
 
 
-    useEffect(() => {
-        getLibros();
-
-    }, []);
-
 
     const updateLibro = () => {
         // Validaciones para asegurarse de que las variables no sean nulas o indefinidas
@@ -91,43 +86,44 @@ const Edit_Libro = () => {
 
 
     // Función para eliminar un libro
-
     const deleteLibro = (libroId, nombrelibro) => {
+    
         Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
+            title: "Estas Seguro de Eliminar ? ",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "Si, Eliminar !"
         }).then((result) => {
             if (result.isConfirmed) {
                 Axios.delete(`http://localhost:3001/delete_libros/${libroId}`)
                     .then(() => {
                         Swal.fire({
                             title: "Deleted!",
-                            text: "Your Libro has been deleted. "+ nombrelibro,
+                            html: `<strong> Your Libro has been deleted.  ${nombrelibro}, </strong> se ha eliminado`,
                             icon: "success"
                         });
-                        getLibros(); // Actualiza la lista de libros después de la actualización
-
+                        getLibros(); // Actualiza la lista de autores después de eliminar
                     })
                     .catch((error) => {
                         Swal.fire({
                             title: "Error!",
-                            text: "There was a problem deleting the file.",
+                            text: "Para Eliminar este Autor Debes Desasociar El libro del Autor",
                             icon: "error"
                         });
-                        console.error("There was an error deleting the file:", error);
+                        console.error("Para Eliminar este Autor Debes Desasociar El libro del Autor:", error);
                     });
             }
-    
+
+
         });
     };
 
-    
-   
+    useEffect(() => {
+        getLibros();
+
+    }, []);
 
     return (
         <div className="container-fluid">
