@@ -34,7 +34,7 @@ const Editar_Editorial = () => {
             });
     };
 
-    
+
 
     // Función para actualizar un editorial
     const updateEditoriales = () => {
@@ -43,9 +43,9 @@ const Editar_Editorial = () => {
                 icon: "error",
                 title: "Error",
                 text: "Por favor, complete todos los campos.",
-                
+
                 timer: 4000,
-                
+
             });
             return;
         }
@@ -85,32 +85,41 @@ const Editar_Editorial = () => {
     }, []);
 
     // Función para eliminar un editorial
-    const deleteEditorial = (editorialId, nombreEditorial) => {  // Añade nombre como argumento
 
-        Axios.delete(`http://localhost:3001/delete_editoriales/${editorialId}`)
-            .then(() => {
-                Swal.fire({
-                    title: "Eliminar!",
-                    html: `<strong>${nombreEditorial}</strong> se ha eliminado`,
-                    icon: "success",
-                    timer: 4000,
-                });
-                getEditoriales();
-            })
-            .catch((error) => {
-                console.error("Hubo un error al eliminar el nombre Editorial:", error);
-                Swal.fire({
-                    icon: "error",
-                    title: "Error",
-                    text: "Hubo un error al eliminar el usuario.",
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
-                    timer: 4000,
-                    timerProgressBar: true,
-                });
-            });
+
+    const deleteEditorial = (editorialId, nombreEditorial) => {
+        Swal.fire({
+            title: "Estas Seguro de Eliminar ? ",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Si, Eliminar !"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                Axios.delete(`http://localhost:3001/delete_editoriales/${editorialId}`)
+                    .then(() => {
+                        Swal.fire({
+                            title: "Deleted!",
+                            html: `<strong>${nombreEditorial}</strong> se ha eliminado`,
+                            icon: "success"
+                        });
+                        getEditoriales(); // Actualiza la lista de autores después de eliminar
+
+                    })
+                    .catch((error) => {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "Para Eliminar este Autor Debes Desasociar El libro del Autor",
+                            icon: "error"
+                        });
+                        console.error("Para Eliminar este Autor Debes Desasociar El libro del Autor:", error);
+                    });
+            }
+
+        });
     };
+
 
     return (
         <div className="container-fluid">
@@ -165,9 +174,9 @@ const Editar_Editorial = () => {
                             </tbody>
                         </table>
                     </div>
-                    </div>
-    
                 </div>
+
+            </div>
 
 
             {/* <!-- The Modal --> */}

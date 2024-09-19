@@ -92,8 +92,8 @@ const Editar_User = () => {
 
     const deleteUser = (id, nombre) => {
         Swal.fire({
-            title: "Are you sure?",
-            text: "You won't be able to revert this!",
+            title: "¿estás seguro??",
+            text: "¡No podrás revertir esto!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
@@ -105,7 +105,7 @@ const Editar_User = () => {
                 .then(() => {
                         Swal.fire({
                             title: "Deleted!",
-                            html: `Your User has been deleted.<strong>${nombre}</strong>`,
+                            html: `Tu usuario ha sido eliminado.<strong> ${nombre}</strong>`,
                             icon: "success"
                         });
                         getUsers(); // Actualiza la lista de autores después de la actualización
@@ -119,7 +119,7 @@ const Editar_User = () => {
                             Primero Debe Eliminar el Prestamo Asociado.`,
                             icon: "error"
                         });
-                        console.error("TPara Eliminar este Usuario Primero Debe Eliminar el Prestamo Asociado.:", error);
+                        console.error("Para Eliminar este Usuario Primero Debe Eliminar el Prestamo Asociado.:", error);
                     });
             }
     

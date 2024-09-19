@@ -3,6 +3,8 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./css/sb-admin-2.css";
 import "./css/sb-admin-2.min.css";
+import { format } from 'date-fns'; //para formatear la fechha
+
 
 import Swal from "sweetalert2";
 import Axios from "axios";
@@ -21,7 +23,10 @@ const Edit_Libro = () => {
 
 
     const [cantidad, setCantidad] = useState("");
-    const [fecha, setFecha] = useState("");
+    const [fecha, setFecha] = useState();
+    const [observacion, setobservacion] = useState();
+
+    console.log(fecha)
 
     //listas data
     const [listalibros, setListalibros] = useState([]);
@@ -49,21 +54,21 @@ const Edit_Libro = () => {
 
     const updateLibro = () => {
         // Validaciones para asegurarse de que las variables no sean nulas o indefinidas
-        if (!libroid || !nombrelibro) {
+        if (!libroid || !nombrelibro || !cantidad  || !fecha ) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Por favor, complete todos los campos. ' + libroid + ' ' + nombrelibro + ' ' + autorid + ' ' + cantidad,
+                html: 'Por favor, complete todos los campos. ' + nombrelibro + ' - ' + cantidad + ' - ' + fecha ,
                 showConfirmButton: true,
             });
             return;
         }
-
         Axios.put("http://localhost:3001/update_libro", {
             libroid,
             nombrelibro,
             cantidad,
             fecha,
+          observacion,
         })
             .then(() => {
                 Swal.fire({
@@ -76,15 +81,13 @@ const Edit_Libro = () => {
             })
             .catch((error) => {
                 console.error("Hubo un error al actualizar el Libro:", error);
+
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text: "Hubo un error al actualizar el Libro.",
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
+                    html: `<strong> Debe Completar Todos los Campos </strong>`,
+                    icon: "error",
                     timer: 4000,
-                    timerProgressBar: true,
                 });
             });
     };
@@ -92,22 +95,22 @@ const Edit_Libro = () => {
 
     // Función para eliminar un libro
 
-    const deleteLibro = (libroId, nombrelibro) => {
+    const deleteLibro = (libroId, nombreLibro) => {
         Swal.fire({
-            title: "Are you sure?",
+            title: "Esta Seguro ?",
             text: "You won't be able to revert this!",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Yes, delete it!"
+            confirmButtonText: "Si, Eliminar!"
         }).then((result) => {
             if (result.isConfirmed) {
                 Axios.delete(`http://localhost:3001/delete_libros/${libroId}`)
                     .then(() => {
                         Swal.fire({
                             title: "Deleted!",
-                            text: "Your Libro has been deleted. "+ nombrelibro,
+                            text: "Your Libro ha Sido Eliminado. ",
                             icon: "success"
                         });
                         getLibros(); // Actualiza la lista de libros después de la actualización
@@ -116,18 +119,18 @@ const Edit_Libro = () => {
                     .catch((error) => {
                         Swal.fire({
                             title: "Error!",
-                            text: "There was a problem deleting the file.",
+                            text: "El Libro No puede ser Eliminado por que esta relacionado con Autor y Editorial.",
                             icon: "error"
                         });
-                        console.error("There was an error deleting the file:", error);
+                        console.error("El Libro No puede ser Eliminado por que esta relacionado con Autor y Editorial.", error);
                     });
             }
-    
+
         });
     };
 
-    
-   
+
+
 
     return (
         <div className="container-fluid">
@@ -149,6 +152,7 @@ const Edit_Libro = () => {
                                     <th scope="col">Autor</th>
                                     <th scope="col">Cantidad</th>
                                     <th scope="col">Fecha Creación</th>
+                                    <th scope="col">Observacion</th>
                                     <th scope="col">Opciones</th>
                                 </tr>
                             </thead>
@@ -161,6 +165,7 @@ const Edit_Libro = () => {
                                         <td>{libro.nombreAutor + " " + libro.apellidoAutor}</td>
                                         <td>{libro.cantidad}</td>
                                         <td>{libro.fechaCreacion}</td>
+                                        <td>{libro.observacion}</td>
                                         <td className="opciones">
 
                                             <div className="btn-group" role="group">
@@ -259,6 +264,15 @@ const Edit_Libro = () => {
                                     <input required type="date" className="form-control"
                                         onChange={(e) => setFecha(e.target.value)}
                                         value={fecha}
+
+                                    />
+                                </div>
+
+                                <div className="input-group mb-3">
+                                    <span className="input-group-text">Observacion:</span>
+                                    <input required type="text" className="form-control"
+                                        onChange={(e) => setobservacion(e.target.value)}
+                                        value={observacion}
 
                                     />
                                 </div>

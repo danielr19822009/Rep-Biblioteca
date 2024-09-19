@@ -235,7 +235,7 @@ app.delete('/delete_editoriales/:editorialId', (req, res) => {
 // Endpoint para obtener libros
 app.get('/get_libros', (req, res) => {
     //query para seleccionar los datos a la base de datos
-    db.query(`SELECT l.libroId, l.nombreLibro, l.editorialId, l.autorId, l.cantidad, l.fechaCreacion, 
+    db.query(`SELECT l.libroId, l.nombreLibro, l.editorialId, l.autorId, l.cantidad, l.fechaCreacion, l.observacion,
         e.nombreEditorial AS nombreEditorial , 
         a.nombreAutor AS nombreAutor , a.apellidoAutor AS apellidoAutor 
        		 FROM libro l
@@ -309,15 +309,16 @@ app.post('/add_libro', (req, res) => {
 
 // Endpoint para actualizar un libro
 app.put('/update_libro', (req, res) => {
-    const { libroid, nombrelibro, editorialid, autorid, cantidad, fecha, } = req.body;
+   
+    const { libroid, nombrelibro, editorialid, autorid, cantidad, fecha, observacion} = req.body;
 
-    if (!libroid || !nombrelibro || !cantidad || !fecha) {
+    if (!libroid || !nombrelibro || !cantidad || !fecha ) {
         return res.status(400).send('Todos los campos son requeridos.');
     }
 
     db.query(
-        'UPDATE libro SET nombreLibro = ?, cantidad = ?, fechaCreacion = ? WHERE libroId = ?',
-        [nombrelibro, cantidad, fecha, libroid],
+        'UPDATE libro SET nombreLibro = ?, cantidad = ?, fechaCreacion = ? ,observacion = ?  WHERE libroId = ?' ,
+        [nombrelibro, cantidad, fecha, observacion, libroid],
         (err, result) => {
             if (err) {
                 console.error('Error al actualizar el Libro:', err);
@@ -343,7 +344,7 @@ app.delete('/delete_libros/:libroId', (req, res) => {
             console.error('Error al eliminar el libro:' + id, err);
             return res.status(500).json({ error: 'Error al eliminar el libro' });
         } else {
-            res.json(result);
+            res.send(result);
         }
     });
 });
@@ -394,7 +395,7 @@ app.post('/add_prestamo', (req, res) => {
 
 // Endpoint para actualizar un prestamo
 app.put('/update_prestamo', (req, res) => {
-    const { Prestamoid, usuario, libro, estado, FechaPrestamo, FechaDevolucion, } = req.body;
+    const { Prestamoid, usuario, libro, estado, FechaPrestamo, FechaDevolucion} = req.body;
 
     if (!Prestamoid ) {
         return res.status(400).send('El ID de Prestamo no Viajo al backend');
@@ -402,7 +403,7 @@ app.put('/update_prestamo', (req, res) => {
 
     db.query(
         'UPDATE prestamo SET estado = ?,fechaCreacion = ?, fechaFin = ? WHERE prestamoId = ?',
-        [estado,FechaPrestamo, FechaPrestamo, Prestamoid],
+        [estado,FechaPrestamo, FechaDevolucion, Prestamoid],
         (err, result) => {
             if (err) {
                 console.error('Error al actualizar el Prestamo:', err);

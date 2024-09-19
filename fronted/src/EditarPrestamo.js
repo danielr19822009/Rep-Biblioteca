@@ -131,18 +131,17 @@ const deletePrestamo = (idprestamo) => {
                 getPrestamos(); // Actualiza la lista de autores después de la actualización
             })
             .catch((error) => {
-                console.error("Hubo un error al actualizar el autor:", error);
+                console.error("Hubo un error al actualizar el Libro:", error);
+
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    text: "Hubo un error al actualizar el autor.",
-                    toast: true,
-                    position: "top-end",
-                    showConfirmButton: false,
+                    html: `<strong> Debe Completar Todos los Campos </strong>`,
+                    icon: "error",
                     timer: 4000,
-                    timerProgressBar: true,
                 });
             });
+        
     };
 
 
