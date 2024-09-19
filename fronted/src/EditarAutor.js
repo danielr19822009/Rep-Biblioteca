@@ -36,7 +36,7 @@ const Editar_Autor = () => {
     // Función para eliminar un autor
 
 
-    const deleteAutor = (autorId, nombreAutor) => {
+    const deleteAutor = (autorId) => {
         Swal.fire({
             title: "Estas Seguro de Eliminar ? ",
             icon: "warning",
@@ -50,11 +50,10 @@ const Editar_Autor = () => {
                     .then(() => {
                         Swal.fire({
                             title: "Deleted!",
-                            html: `Autor A sido Eliminado !!!. <strong>${nombreAutor}</strong>`,
+                            text: "Autor A sido Eliminado !!!.",
                             icon: "success"
-                        });  
+                        });
                         getAutores(); // Actualiza la lista de autores después de eliminar
-
                     })
                     .catch((error) => {
                         Swal.fire({
@@ -65,6 +64,7 @@ const Editar_Autor = () => {
                         console.error("Para Eliminar este Autor Debes Desasociar El libro del Autor:", error);
                     });
             }
+           
     
         });
     };
@@ -95,7 +95,7 @@ const Editar_Autor = () => {
             .then(() => {
                 Swal.fire({
                     title: "Actualizado!",
-                    html: `<strong> ${nombreAutor}</strong> Se ha actualizado`,
+                    html: `<strong>${nombreAutor}</strong> Se ha actualizado`,
                     icon: "success",
                     timer: 4000,
                 });

@@ -3,8 +3,6 @@ import "./App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./css/sb-admin-2.css";
 import "./css/sb-admin-2.min.css";
-import { format } from 'date-fns'; //para formatear la fechha
-
 
 import Swal from "sweetalert2";
 import Axios from "axios";
@@ -23,10 +21,7 @@ const Edit_Libro = () => {
 
 
     const [cantidad, setCantidad] = useState("");
-    const [fecha, setFecha] = useState();
-    const [observacion, setobservacion] = useState();
-
-    console.log(fecha)
+    const [fecha, setFecha] = useState("");
 
     //listas data
     const [listalibros, setListalibros] = useState([]);
@@ -46,29 +41,24 @@ const Edit_Libro = () => {
     };
 
 
-    useEffect(() => {
-        getLibros();
-
-    }, []);
-
 
     const updateLibro = () => {
         // Validaciones para asegurarse de que las variables no sean nulas o indefinidas
-        if (!libroid || !nombrelibro || !cantidad  || !fecha ) {
+        if (!libroid || !nombrelibro) {
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                html: 'Por favor, complete todos los campos. ' + nombrelibro + ' - ' + cantidad + ' - ' + fecha ,
+                text: 'Por favor, complete todos los campos. ' + libroid + ' ' + nombrelibro + ' ' + autorid + ' ' + cantidad,
                 showConfirmButton: true,
             });
             return;
         }
+
         Axios.put("http://localhost:3001/update_libro", {
             libroid,
             nombrelibro,
             cantidad,
             fecha,
-          observacion,
         })
             .then(() => {
                 Swal.fire({
@@ -81,56 +71,59 @@ const Edit_Libro = () => {
             })
             .catch((error) => {
                 console.error("Hubo un error al actualizar el Libro:", error);
-
                 Swal.fire({
                     icon: "error",
                     title: "Error",
-                    html: `<strong> Debe Completar Todos los Campos </strong>`,
-                    icon: "error",
+                    text: "Hubo un error al actualizar el Libro.",
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
                     timer: 4000,
+                    timerProgressBar: true,
                 });
             });
     };
 
 
     // Función para eliminar un libro
-
-    const deleteLibro = (libroId, nombreLibro) => {
+    const deleteLibro = (libroId, nombrelibro) => {
+    
         Swal.fire({
-            title: "Esta Seguro ?",
-            text: "You won't be able to revert this!",
+            title: "Estas Seguro de Eliminar ? ",
             icon: "warning",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Si, Eliminar!"
+            confirmButtonText: "Si, Eliminar !"
         }).then((result) => {
             if (result.isConfirmed) {
                 Axios.delete(`http://localhost:3001/delete_libros/${libroId}`)
                     .then(() => {
                         Swal.fire({
                             title: "Deleted!",
-                            text: "Your Libro ha Sido Eliminado. ",
+                            html: `<strong> Your Libro has been deleted.  ${nombrelibro}, </strong> se ha eliminado`,
                             icon: "success"
                         });
-                        getLibros(); // Actualiza la lista de libros después de la actualización
-
+                        getLibros(); // Actualiza la lista de autores después de eliminar
                     })
                     .catch((error) => {
                         Swal.fire({
                             title: "Error!",
-                            text: "El Libro No puede ser Eliminado por que esta relacionado con Autor y Editorial.",
+                            text: "Para Eliminar este Autor Debes Desasociar El libro del Autor",
                             icon: "error"
                         });
-                        console.error("El Libro No puede ser Eliminado por que esta relacionado con Autor y Editorial.", error);
+                        console.error("Para Eliminar este Autor Debes Desasociar El libro del Autor:", error);
                     });
             }
+
 
         });
     };
 
+    useEffect(() => {
+        getLibros();
 
-
+    }, []);
 
     return (
         <div className="container-fluid">
@@ -152,7 +145,6 @@ const Edit_Libro = () => {
                                     <th scope="col">Autor</th>
                                     <th scope="col">Cantidad</th>
                                     <th scope="col">Fecha Creación</th>
-                                    <th scope="col">Observacion</th>
                                     <th scope="col">Opciones</th>
                                 </tr>
                             </thead>
@@ -165,7 +157,6 @@ const Edit_Libro = () => {
                                         <td>{libro.nombreAutor + " " + libro.apellidoAutor}</td>
                                         <td>{libro.cantidad}</td>
                                         <td>{libro.fechaCreacion}</td>
-                                        <td>{libro.observacion}</td>
                                         <td className="opciones">
 
                                             <div className="btn-group" role="group">
@@ -264,15 +255,6 @@ const Edit_Libro = () => {
                                     <input required type="date" className="form-control"
                                         onChange={(e) => setFecha(e.target.value)}
                                         value={fecha}
-
-                                    />
-                                </div>
-
-                                <div className="input-group mb-3">
-                                    <span className="input-group-text">Observacion:</span>
-                                    <input required type="text" className="form-control"
-                                        onChange={(e) => setobservacion(e.target.value)}
-                                        value={observacion}
 
                                     />
                                 </div>
