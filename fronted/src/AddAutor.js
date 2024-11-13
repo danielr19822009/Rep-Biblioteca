@@ -26,7 +26,7 @@ const Add_Autor = () => {
             });
         } else {
             // Realiza una solicitud POST para agregar el autor
-            Axios.post("http://localhost:3001/add_autores", {
+            Axios.post("https://rep-biblioteca.vercel.app/add_autores", {
                 nombreAutor,
                 apellidoAutor,
             })
