@@ -15,7 +15,7 @@ const db = mysql.createConnection({
     host: 'db-biblioteca.cdwk8g26ozev.us-east-1.rds.amazonaws.com',  //'localhost',
     user: 'admin',
     password: 'bdbiblioteca123*',
-    database: 'db-biblioteca',
+    database: '',
 });
 
 console.log("Db inicializado");
