@@ -12,11 +12,18 @@ app.use(cors());
 app.use(express.json());
 
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'bd_librarysm',
+    host: 'db-biblioteca.cdwk8g26ozev.us-east-1.rds.amazonaws.com',  //'localhost',
+    user: 'admin',
+    password: 'bdbiblioteca123*',
+    database: 'db-biblioteca',
 });
+
+// const db = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'root',
+//     password: '',
+//     database: 'bd_librarysm',
+// });
 
 ////////users///////////////////////////////
 //instruccion para tomar los datos enviados desde el formulario con la ruta 
