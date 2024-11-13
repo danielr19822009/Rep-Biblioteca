@@ -53,7 +53,7 @@ const Add_Autor = () => {
 
     // Función para obtener la lista de autores
     const getAutores = () => {
-        Axios.get("http://localhost:3001/get_autores")
+        Axios.get("https://rep-biblioteca.vercel.app/get_autores")
             .then((response) => {
                 setAutores(response.data); // Actualiza el estado con los datos obtenidos
             })
