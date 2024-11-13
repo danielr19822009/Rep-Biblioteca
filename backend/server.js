@@ -318,15 +318,15 @@ app.post('/add_libro', (req, res) => {
 
 // Endpoint para actualizar un libro
 app.put('/update_libro', (req, res) => {
-   
-    const { libroid, nombrelibro, editorialid, autorid, cantidad, fecha, observacion} = req.body;
 
-    if (!libroid || !nombrelibro || !cantidad || !fecha ) {
+    const { libroid, nombrelibro, editorialid, autorid, cantidad, fecha, observacion } = req.body;
+
+    if (!libroid || !nombrelibro || !cantidad || !fecha) {
         return res.status(400).send('Todos los campos son requeridos.');
     }
 
     db.query(
-        'UPDATE libro SET nombreLibro = ?, cantidad = ?, fechaCreacion = ? ,observacion = ?  WHERE libroId = ?' ,
+        'UPDATE libro SET nombreLibro = ?, cantidad = ?, fechaCreacion = ? ,observacion = ?  WHERE libroId = ?',
         [nombrelibro, cantidad, fecha, observacion, libroid],
         (err, result) => {
             if (err) {
@@ -404,15 +404,15 @@ app.post('/add_prestamo', (req, res) => {
 
 // Endpoint para actualizar un prestamo
 app.put('/update_prestamo', (req, res) => {
-    const { Prestamoid, usuario, libro, estado, FechaPrestamo, FechaDevolucion} = req.body;
+    const { Prestamoid, usuario, libro, estado, FechaPrestamo, FechaDevolucion } = req.body;
 
-    if (!Prestamoid ) {
+    if (!Prestamoid) {
         return res.status(400).send('El ID de Prestamo no Viajo al backend');
     }
 
     db.query(
         'UPDATE prestamo SET estado = ?,fechaCreacion = ?, fechaFin = ? WHERE prestamoId = ?',
-        [estado,FechaPrestamo, FechaDevolucion, Prestamoid],
+        [estado, FechaPrestamo, FechaDevolucion, Prestamoid],
         (err, result) => {
             if (err) {
                 console.error('Error al actualizar el Prestamo:', err);
@@ -442,13 +442,12 @@ app.delete('/delete_prestamo/:prestamoid', (req, res) => {
     });
 });
 
-
-
-app.listen(3001, () => {
-    console.log(`Servidor corriendo en http://localhost:${port}`);
-},
-()=>{
-    console.log("Fallo");
+try {
+    app.listen(3001, () => {
+        console.log(`Servidor corriendo en http://localhost:${port}`);
+    })
 }
+catch (err) {
 
-);
+    console.log(err)
+};
