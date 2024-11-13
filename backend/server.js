@@ -18,6 +18,8 @@ const db = mysql.createConnection({
     database: 'db-biblioteca',
 });
 
+console.log("Db inicializado");
+
 // const db = mysql.createConnection({
 //     host: 'localhost',
 //     user: 'root',
@@ -444,4 +446,9 @@ app.delete('/delete_prestamo/:prestamoid', (req, res) => {
 
 app.listen(3001, () => {
     console.log(`Servidor corriendo en http://localhost:${port}`);
-});
+},
+()=>{
+    console.log("Fallo");
+}
+
+);
