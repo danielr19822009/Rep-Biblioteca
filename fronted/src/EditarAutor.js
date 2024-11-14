@@ -19,7 +19,7 @@ const Editar_Autor = () => {
 
     // Función para obtener la lista de autores
     const getAutores = () => {
-        Axios.get("http://localhost:3001/get_autores")
+        Axios.get("https://rep-biblioteca.vercel.app/get_autores")
             .then((response) => {
                 setAutores(response.data); // Actualiza el estado con los datos obtenidos
             })
@@ -46,7 +46,7 @@ const Editar_Autor = () => {
             confirmButtonText: "Si, Eliminar !"
         }).then((result) => {
             if (result.isConfirmed) {
-                Axios.delete(`http://localhost:3001/delete_autor/${autorId}`)
+                Axios.delete(`https://rep-biblioteca.vercel.app/delete_autor/${autorId}`)
                     .then(() => {
                         Swal.fire({
                             title: "Deleted!",
@@ -87,7 +87,7 @@ const Editar_Autor = () => {
             return;
         }
 
-        Axios.put("http://localhost:3001/update_autor", {
+        Axios.put("https://rep-biblioteca.vercel.app/update_autor", {
             autorId: autorid,
             nombreAutor,
             apellidoAutor
@@ -234,7 +234,7 @@ const Editar_Autor = () => {
 
 export function export_addAutor(nombre, apellido) {
     // Realiza una solicitud POST para agregar el autor
-    Axios.post("http://localhost:3001/add_autores", {
+    Axios.post("https://rep-biblioteca.vercel.app/add_autores", {
         nombre,
         apellido,
     })

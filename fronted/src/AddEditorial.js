@@ -26,7 +26,7 @@ const Add_Editorial = () => {
 
     // Función para obtener las editoriales y autores
     const getEditoriales = () => {
-        Axios.get("http://localhost:3001/get_editoriales")
+        Axios.get("https://rep-biblioteca.vercel.app/get_editoriales")
             .then((response) => {
                 setEditoriales(response.data);
             })
@@ -52,7 +52,7 @@ const Add_Editorial = () => {
         } else {
 
             // Realiza una solicitud POST para agregar el autor
-            Axios.post("http://localhost:3001/add_editoriales", {
+            Axios.post("https://rep-biblioteca.vercel.app/add_editoriales", {
                 nombreEditorial,
                 direccionEditorial,
                 telefonoEditorial,

@@ -48,7 +48,7 @@ const Add_Libro = () => {
 
 	// Función para obtener los libros
 	const getLibros = () => {
-		Axios.get("http://localhost:3001/get_libros")
+		Axios.get("https://rep-biblioteca.vercel.app/get_libros")
 			.then((response) => {
 				console.log("Libros obtenidos:", response.data); // Verifica los datos
 				setListalibros(response.data);
@@ -60,7 +60,7 @@ const Add_Libro = () => {
 
 	// Función para obtener las editoriales
 	const getEditoriales = () => {
-		Axios.get("http://localhost:3001/get_libros_editoriales")
+		Axios.get("https://rep-biblioteca.vercel.app/get_libros_editoriales")
 			.then((response) => {
 				console.log("Editoriales obtenidas:", response.data); // Verifica los datos
 				setlistaeditorial(response.data);
@@ -72,7 +72,7 @@ const Add_Libro = () => {
 
 	// Función para obtener los autores
 	const getautores = () => {
-		Axios.get("http://localhost:3001/get_libros_autores")
+		Axios.get("https://rep-biblioteca.vercel.app/get_libros_autores")
 			.then((response) => {
 				console.log("Autores obtenidos:", response.data); // Verifica los datos
 				setlistaautor(response.data);
@@ -95,7 +95,7 @@ const Add_Libro = () => {
 				timer: 3000,
 			})
 		} else {
-			Axios.post("http://localhost:3001/add_libro", {
+			Axios.post("https://rep-biblioteca.vercel.app/add_libro", {
 				nombrelibro,
 				nombreautor,
 				nombreeditorial,
